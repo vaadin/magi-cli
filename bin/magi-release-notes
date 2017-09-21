@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+'use strict';
+
+const asyncExec = require('util').promisify(require('child_process').exec);
+async function run(cmd) {
+  const {stdout} = await asyncExec(cmd);
+  return stdout;
+}
+
+const program = require('commander');
+program
+  .arguments('<fromVersion> <toVersion>')
+  .parse(process.argv);
+
+if (program.args.length < 2) {
+  console.error('not enough arguments, expected <fromVersion> <toVersion>');
+  process.exit(1);
+}
+
+async function main(fromVersion, toVersion) {
+  const toVersionNumber = toVersion.replace(/^v/, '');
+  const path = require('path');
+  const packageName = require(path.resolve(process.cwd(), 'package.json')).name;
+
+  function reformatChangeLog(changeLog) {
+    return '- ' + changeLog
+        .split(/^- /gm)
+        // first item is always empty
+        .filter((i, index) => index !== 0)
+        // strip trailing whitespace from commit description body
+        .map(item => item.replace(/\s+$/, ''))
+        // If top commit subject matches toVersionNumber - skip it
+        .filter((item, index) => index !== 0 || !RegExp(`^\\S+ ${toVersionNumber}\\b`).exec(item))
+        .join('\n\n- ')
+  }
+
+  const changeLog = await run(`git log --no-merges --pretty=format:"- %h %w(0,0,2)%B" ${fromVersion}..${toVersion}`);
+
+  console.log(`\
+[Live Demo →](https://cdn.vaadin.com/${packageName}/${toVersionNumber}/demo/)
+[API Documentation →](https://cdn.vaadin.com/${packageName}/${toVersionNumber}/)
+
+### Changes Since [${fromVersion}](https://github.com/vaadin/${packageName}/releases/tag/${fromVersion}):
+
+${reformatChangeLog(changeLog)}
+`);
+}
+
+main(...program.args)
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

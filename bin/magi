@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+'use strict';
+
+process.title = 'magi';
+
+const program = require('commander');
+
+program
+  .version(require('../package.json').version)
+  .command(
+    'release-notes <fromVersion> <toVersion>',
+    'Draft release notes for the specified version range'
+  )
+  .parse(process.argv);
