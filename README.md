@@ -13,6 +13,7 @@ Elements team command-line member
 
     $ cd some-element-repo
     $ magi release-notes <fromVersion> <toVersion>
+    $ magi add-milestone <fromVersion> <toVersion>
 
 ## Development
 

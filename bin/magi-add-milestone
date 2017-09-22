@@ -1,0 +1,121 @@
+#!/usr/bin/env node
+'use strict';
+
+const asyncExec = require('util').promisify(require('child_process').exec);
+async function run(cmd) {
+  const {stdout} = await asyncExec(cmd);
+  return stdout;
+}
+
+const program = require('commander');
+program
+  .arguments('<fromVersion> <toVersion>')
+  .option('--auth', 'Ask and replace saved GitHub authentication credentials')
+  .parse(process.argv);
+
+const cliPackageName = require('../package.json').name;
+const Configstore = require('configstore');
+const GitHub = require('github-api');
+const rl = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+const ask = (query) => new Promise((resolve, reject) => rl.question(query, resolve));
+
+async function getGitHubApi() {
+  const conf = new Configstore(cliPackageName);
+  let {username, token} = conf.has('github.com') ? conf.get('github.com') : {};
+  if (program.auth || !username || !token) {
+    console.log('Please provide your GitHub.com authentication credentials')
+    const usernameAnswer = await ask(`Username${username ? ` (${username})` : ''}: `);
+    if (usernameAnswer) username = usernameAnswer;
+    if (!username) {
+      throw 'Empty username';
+    } else {
+      conf.set('github.com.username', username);
+    }
+
+    console.log('Generate OAuth personal access token here: https://github.com/settings/tokens/new?scopes=repo')
+    const tokenAnswer = await ask(`Token${token ? ' (press enter to use saved)' : ''}: `);
+    if (tokenAnswer) token = tokenAnswer;
+    if (!token) {
+      throw 'Empty token';
+    } else {
+      conf.set('github.com.token', token);
+    }
+  }
+
+  return new GitHub({username, token});
+}
+
+async function main() {
+  const gh = await getGitHubApi();
+
+  if (program.args.length < 2) {
+    throw 'not enough arguments, expected <fromVersion> <toVersion>';
+  }
+
+  const [fromVersion, toVersion] = program.args;
+  const milestoneTitle = toVersion.replace(/^v/, '');
+
+  const [user, repo] = require(require('path').resolve(process.cwd(), 'package.json'))
+    .repository.split('/');
+  const issues = gh.getIssues(user, repo);
+
+  // Fetch complete milestones array
+  const milestones = (await issues._requestAllPages(
+    `/repos/${user}/${repo}/milestones`,
+    {state: 'all'}
+  )).data;
+
+  // Find or create new milestone
+  const milestone = milestones.find((milestone) => milestone.title === milestoneTitle) ||
+    (await issues.createMilestone({title: milestoneTitle, state: 'closed'})).data;
+
+  // If milestone is open — close it
+  if (milestone.state === 'open') {
+    (await issues.editMilestone(milestone.number, {state: 'closed'})).data;
+  }
+
+  // Extract merged pull request numbers from merge commits log
+  const mergeTitles = await run(`git log --merges --pretty=format:"%s" ${fromVersion}..${toVersion}`);
+  const pullRequestNumbers = mergeTitles.split('\n')
+    .map(line => line.replace(/^Merge pull request #(\d+) .*/, '$1'))
+    .map(n => Number.parseInt(n))
+    .filter(n => !Number.isNaN(n));
+
+  await Promise.all(
+    pullRequestNumbers.map(async pullRequestNumber => {
+      // Get pull request data
+      const pullRequest = (await issues.getIssue(pullRequestNumber)).data;
+
+      // Find fixed issues in the pull request body
+      const issueNumbers = pullRequest.body
+        .split('\n')
+        .filter(line => /^fixes /i.test(line))
+        .reduce((numbers, tokenLine) => numbers.concat(
+          (tokenLine.match(/ #\d+/g) || [])
+            .map(match => Number.parseInt(match.replace(' #', '')))
+            .filter(n => !Number.isNaN(n))
+        ), []);
+
+
+      // Set milestone on all the fixed issues
+      await Promise.all(issueNumbers.map(issueNumber =>
+        issues.editIssue(issueNumber, {milestone: milestone.number})
+      ));
+
+      // Set milestone on the pull request
+      await issues.editIssue(pullRequestNumber, {milestone: milestone.number});
+    })
+  );
+
+  console.log(milestone.html_url + '?closed=1');
+}
+
+main(...program.args)
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
