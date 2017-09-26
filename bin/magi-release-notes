@@ -38,7 +38,7 @@ async function main(fromVersion, toVersion) {
 
   console.log(`\
 [Live Demo →](https://cdn.vaadin.com/${packageName}/${toVersionNumber}/demo/)
-[API Documentation →](https://cdn.vaadin.com/${packageName}/${toVersionNumber}/)
+[API Documentation →](https://cdn.vaadin.com/${packageName}/${toVersionNumber}/#/elements/${packageName})
 
 ### Changes Since [${fromVersion}](https://github.com/vaadin/${packageName}/releases/tag/${fromVersion}):
 
