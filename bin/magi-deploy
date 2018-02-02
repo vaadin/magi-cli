@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander');
+program
+  .option('--auth', 'Ask and replace saved Bender authentication credentials')
+  .parse(process.argv);
+
+const getBenderApi = require('../lib/bender-api.js').getBenderApi;
+
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+async function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function main() {
+  const api = await getBenderApi(program.auth);
+
+  if (program.args.length < 1) {
+    throw 'not enough arguments, expected <version>';
+  }
+
+  const element = require(require('path').resolve(process.cwd(), 'package.json')).name;
+  const [tag] = program.args;
+  const version = tag.replace(/^v/, '');
+
+  const response = await api.post(`/buildQueue`, {
+    buildType: {id: 'CoreElements_DeployTest_Mdeploy'},
+    properties: {
+      property: [
+        {name: 'element', value: element},
+        {name: 'tag', value: tag},
+        {name: 'version', value: version}
+      ]
+    }
+  });
+
+  const id = response.data.id;
+  console.log('Build link: ', response.data.webUrl);
+
+  let n = 0;
+  do {
+    const response = await api.get(`/buildQueue/id:${id}`);
+    readline.clearLine(process.stdout, 0);
+    readline.cursorTo(process.stdout, 0);
+    const dots = [...Array(n%3+2)].join('.');
+    rl.write(`[${response.data.state}] ${response.data.statusText}${dots}`);
+    if (response.data.state === 'finished') {
+      break;
+    }
+    await timeout(1000);
+    n++;
+  } while (true);
+}
+
+main(...program.args)
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

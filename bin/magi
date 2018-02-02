@@ -15,4 +15,8 @@ program
     'add-milestone <fromVersion> <toVersion>',
     'Add milestone for <toVersion> to all issues and PRs closed during the specified version range'
   )
+  .command(
+    'deploy <version>',
+    'Build and deploy version <version> to CDN origin'
+  )
   .parse(process.argv);
