@@ -89,21 +89,24 @@ async function main() {
       // Get pull request data
       const pullRequest = (await issues.getIssue(pullRequestNumber)).data;
 
-      // Find fixed issues in the pull request body
-      const issueNumbers = pullRequest.body
-        .split('\n')
-        .filter(line => /^fixes /i.test(line))
-        .reduce((numbers, tokenLine) => numbers.concat(
-          (tokenLine.match(/ #\d+/g) || [])
-            .map(match => Number.parseInt(match.replace(' #', '')))
-            .filter(n => !Number.isNaN(n))
-        ), []);
-
-
-      // Set milestone on all the fixed issues
-      await Promise.all(issueNumbers.map(issueNumber =>
-        issues.editIssue(issueNumber, {milestone: milestone.number})
-      ));
+      // NOTE: We stop using release number milestone for issues in favour
+      // of project milestones, as agreed on 1 Feb 2018.
+      //
+      // // Find fixed issues in the pull request body
+      // const issueNumbers = pullRequest.body
+      //   .split('\n')
+      //   .filter(line => /^fixes /i.test(line))
+      //   .reduce((numbers, tokenLine) => numbers.concat(
+      //     (tokenLine.match(/ #\d+/g) || [])
+      //       .map(match => Number.parseInt(match.replace(' #', '')))
+      //       .filter(n => !Number.isNaN(n))
+      //   ), []);
+      //
+      //
+      // // Set milestone on all the fixed issues
+      // await Promise.all(issueNumbers.map(issueNumber =>
+      //   issues.editIssue(issueNumber, {milestone: milestone.number})
+      // ));
 
       // Set milestone on the pull request
       await issues.editIssue(pullRequestNumber, {milestone: milestone.number});
