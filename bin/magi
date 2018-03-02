@@ -19,4 +19,8 @@ program
     'deploy <version>',
     'Build and deploy version <version> to CDN origin'
   )
+  .command(
+    'webjar <version>',
+    'Deploy version <version> on https://www.webjars.org'
+  )
   .parse(process.argv);
