@@ -1,55 +1,17 @@
 #!/usr/bin/env node
 'use strict';
 
-const asyncExec = require('util').promisify(require('child_process').exec);
-async function run(cmd) {
-  const {stdout} = await asyncExec(cmd);
-  return stdout;
-}
-
 const program = require('commander');
 program
   .arguments('<fromVersion> <toVersion>')
   .option('--auth', 'Ask and replace saved GitHub authentication credentials')
   .parse(process.argv);
 
-const cliPackageName = require('../package.json').name;
-const Configstore = require('configstore');
-const GitHub = require('github-api');
-const rl = require('readline').createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-const ask = (query) => new Promise((resolve, reject) => rl.question(query, resolve));
-
-async function getGitHubApi() {
-  const conf = new Configstore(cliPackageName);
-  let {username, token} = conf.has('github.com') ? conf.get('github.com') : {};
-  if (program.auth || !username || !token) {
-    console.log('Please provide your GitHub.com authentication credentials')
-    const usernameAnswer = await ask(`Username${username ? ` (${username})` : ''}: `);
-    if (usernameAnswer) username = usernameAnswer;
-    if (!username) {
-      throw 'Empty username';
-    } else {
-      conf.set('github.com.username', username);
-    }
-
-    console.log('Generate OAuth personal access token here: https://github.com/settings/tokens/new?scopes=repo')
-    const tokenAnswer = await ask(`Token${token ? ' (press enter to use saved)' : ''}: `);
-    if (tokenAnswer) token = tokenAnswer;
-    if (!token) {
-      throw 'Empty token';
-    } else {
-      conf.set('github.com.token', token);
-    }
-  }
-
-  return new GitHub({username, token});
-}
+const {run, workingPackage} = require('../lib/tools.js');
+const {getGitHubApi} = require('../lib/github-api.js');
 
 async function main() {
-  const gh = await getGitHubApi();
+  const gh = await getGitHubApi(program.auth);
 
   if (program.args.length < 2) {
     throw 'not enough arguments, expected <fromVersion> <toVersion>';
@@ -58,8 +20,7 @@ async function main() {
   const [fromVersion, toVersion] = program.args;
   const milestoneTitle = toVersion.replace(/^v/, '');
 
-  const [user, repo] = require(require('path').resolve(process.cwd(), 'package.json'))
-    .repository.split('/');
+  const [user, repo] = workingPackage.repository.split('/');
   const issues = gh.getIssues(user, repo);
 
   // Fetch complete milestones array

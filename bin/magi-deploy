@@ -6,13 +6,10 @@ program
   .option('--auth', 'Ask and replace saved Bender authentication credentials')
   .parse(process.argv);
 
-const getBenderApi = require('../lib/bender-api.js').getBenderApi;
+const {workingPackage} = require('../lib/tools.js');
+const {getBenderApi} = require('../lib/bender-api.js');
 
 const readline = require('readline');
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 async function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -25,7 +22,7 @@ async function main() {
     throw 'not enough arguments, expected <version>';
   }
 
-  const element = require(require('path').resolve(process.cwd(), 'package.json')).name;
+  const element = workingPackage.name;
   const [tag] = program.args;
   const version = tag.replace(/^v/, '');
 
@@ -49,7 +46,7 @@ async function main() {
     readline.clearLine(process.stdout, 0);
     readline.cursorTo(process.stdout, 0);
     const dots = [...Array(n%3+2)].join('.');
-    rl.write(`[${response.data.state}] ${response.data.statusText}${dots}`);
+    process.stdout.write(`[${response.data.state}] ${response.data.statusText}${dots}`);
     if (response.data.state === 'finished') {
       break;
     }

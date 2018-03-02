@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-const asyncExec = require('util').promisify(require('child_process').exec);
-async function run(cmd) {
-  const {stdout} = await asyncExec(cmd);
-  return stdout;
-}
+const {run, workingPackage} = require('../lib/tools.js');
 
 const program = require('commander');
 program
@@ -19,8 +15,6 @@ if (program.args.length < 2) {
 
 async function main(fromVersion, toVersion) {
   const toVersionNumber = toVersion.replace(/^v/, '');
-  const path = require('path');
-  const packageName = require(path.resolve(process.cwd(), 'package.json')).name;
 
   function reformatChangeLog(changeLog) {
     return '- ' + changeLog
@@ -37,10 +31,10 @@ async function main(fromVersion, toVersion) {
   const changeLog = await run(`git log --no-merges --pretty=format:"- %h %w(0,0,2)%B" ${fromVersion}..${toVersion}`);
 
   console.log(`\
-[Live Demo →](https://cdn.vaadin.com/${packageName}/${toVersionNumber}/demo/)
-[API Documentation →](https://cdn.vaadin.com/${packageName}/${toVersionNumber}/#/elements/${packageName})
+[Live Demo →](https://cdn.vaadin.com/${workingPackage.name}/${toVersionNumber}/demo/)
+[API Documentation →](https://cdn.vaadin.com/${workingPackage.name}/${toVersionNumber}/#/elements/${workingPackage.name})
 
-### Changes Since [${fromVersion}](https://github.com/vaadin/${packageName}/releases/tag/${fromVersion}):
+### Changes Since [${fromVersion}](https://github.com/vaadin/${workingPackage.name}/releases/tag/${fromVersion}):
 
 ${reformatChangeLog(changeLog)}
 `);
