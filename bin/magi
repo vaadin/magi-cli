@@ -23,4 +23,8 @@ program
     'webjar <version>',
     'Deploy version <version> on https://www.webjars.org'
   )
+  .command(
+    'p3-convert [modulizerArgs...]',
+    'Prepares package.json and runs modulizer with pre-configured arguments'
+  )
   .parse(process.argv);

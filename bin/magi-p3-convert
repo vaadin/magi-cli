@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+'use strict';
+
+const {workingPackage} = require('../lib/tools.js');
+const {EOL} = require('os');
+const path = require('path');
+const fs = require('fs');
+
+function serializeJson(json) {
+  return JSON.stringify(workingPackage, undefined, 2).split('\n').join(EOL) + EOL;
+}
+
+const child_process = require('child_process');
+function runSync(cmd) {
+  const result = child_process.spawnSync(cmd, {
+    shell: true,
+    stdio: 'inherit'
+  });
+  if (result.status !== 0) {
+    throw 'Unexpected error when running: ' + cmd;
+  }
+}
+
+async function main() {
+  // Check for clean git repo first
+  try {
+    runSync('git diff-index --quiet --cached HEAD --');
+    runSync('git diff-files --quiet');
+  } catch(e) {
+    throw 'Error: expected working directory to have clean git repository state';
+  }
+
+  // Delete devDependencies in package.json
+  delete workingPackage.devDependencies;
+
+  // Delete scripts in package.json
+  delete workingPackage.scripts;
+
+  // Format and write changes to package.json
+  fs.writeFileSync(
+    path.resolve(process.cwd(), 'package.json'),
+    serializeJson(workingPackage)
+  );
+  runSync('git add package.json');
+
+  // Remove gulpfile.js, if present
+  try {
+    fs.accessSync(
+      path.resolve(process.cwd(), 'gulpfile.js'),
+      fs.constants.R_OK | fs.constants.W_OK
+    );
+    runSync('git rm gulpfile.js');
+  } catch(e) { }
+
+  // Commit changes
+  runSync('git commit -m "magi-cli: prepare for modulizer"');
+
+  // Load custom dependency-map.json and format
+  const dependencyMap = require('../dependency-map.json');
+  const dmStrings = Object.entries(dependencyMap)
+    .map(([from, to]) => `${from},${to.npm},${to.semver}`);
+
+  // Finally,
+  runSync(`
+    modulizer \
+      --dependency-mapping ${dmStrings.join(' ')} \
+      --delete-files bower.json \
+      ${process.argv.slice(2).join(' ')} \
+  `);
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

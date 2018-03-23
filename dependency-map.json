@@ -1,0 +1,126 @@
+{
+  "vaadin-themable-mixin": {
+    "npm": "@vaadin/vaadin-themable-mixin",
+    "semver": "^1.1.5-pre.1"
+  },
+  "vaadin-control-state-mixin": {
+    "npm": "@vaadin/vaadin-control-state-mixin",
+    "semver": "^2.0.3-pre.1"
+  },
+  "vaadin-list-mixin": {
+    "npm": "@vaadin/vaadin-list-mixin",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-element-mixin": {
+    "npm": "@vaadin/vaadin-element-mixin",
+    "semver": "^1.0.2-pre.1"
+  },
+  "vaadin-usage-statistics": {
+    "npm": "@vaadin/vaadin-usage-statistics",
+    "semver": "^1.0.6-pre.1"
+  },
+  "vaadin-development-mode-detector": {
+    "npm": "@vaadin/vaadin-development-mode-detector",
+    "semver": "^1.0.3-pre.1"
+  },
+  "vaadin-button": {
+    "npm": "@vaadin/vaadin-button",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-checkbox": {
+    "npm": "@vaadin/vaadin-checkbox",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-combo-box": {
+    "npm": "@vaadin/vaadin-combo-box",
+    "semver": "^4.0.0-pre.1"
+  },
+  "vaadin-context-menu": {
+    "npm": "@vaadin/vaadin-context-menu",
+    "semver": "^4.0.0-pre.1"
+  },
+  "vaadin-date-picker": {
+    "npm": "@vaadin/vaadin-date-picker",
+    "semver": "^3.0.0-pre.1"
+  },
+  "vaadin-dialog": {
+    "npm": "@vaadin/vaadin-dialog",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-dropdown-menu": {
+    "npm": "@vaadin/vaadin-dropdown-menu",
+    "semver": "^1.0.0-pre.1"
+  },
+  "vaadin-form-layout": {
+    "npm": "@vaadin/vaadin-form-layout",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-grid": {
+    "npm": "@vaadin/vaadin-grid",
+    "semver": "^5.0.0-pre.1"
+  },
+  "vaadin-icons": {
+    "npm": "@vaadin/vaadin-icons",
+    "semver": "^4.1.3-pre.1"
+  },
+  "vaadin-item": {
+    "npm": "@vaadin/vaadin-item",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-list-box": {
+    "npm": "@vaadin/vaadin-list-box",
+    "semver": "^1.0.0-pre.1"
+  },
+  "vaadin-lumo-styles": {
+    "npm": "@vaadin/vaadin-lumo-styles",
+    "semver": "^1.0.0-pre.1"
+  },
+  "vaadin-notification": {
+    "npm": "@vaadin/vaadin-notification",
+    "semver": "^1.0.0-pre.1"
+  },
+  "vaadin-ordered-layout": {
+    "npm": "@vaadin/vaadin-ordered-layout",
+    "semver": "^1.0.0-pre.1"
+  },
+  "vaadin-progress-bar": {
+    "npm": "@vaadin/vaadin-progress-bar",
+    "semver": "^1.0.0-pre.1"
+  },
+  "vaadin-radio-button": {
+    "npm": "@vaadin/vaadin-radio-button",
+    "semver": "^1.0.0-pre.1"
+  },
+  "vaadin-split-layout": {
+    "npm": "@vaadin/vaadin-split-layout",
+    "semver": "^4.0.0-pre.1"
+  },
+  "vaadin-tabs": {
+    "npm": "@vaadin/vaadin-tabs",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-text-field": {
+    "npm": "@vaadin/vaadin-text-field",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-upload": {
+    "npm": "@vaadin/vaadin-upload",
+    "semver": "^4.0.0-pre.1"
+  },
+  "vaadin-overlay": {
+    "npm": "@vaadin/vaadin-overlay",
+    "semver": "^2.0.6-pre.1"
+  },
+  "vaadin-item": {
+    "npm": "@vaadin/vaadin-item",
+    "semver": "^2.0.0-pre.1"
+  },
+  "vaadin-demo-helpers": {
+    "npm": "@vaadin/vaadin-demo-helpers",
+    "semver": "^1.2.5-pre.1"
+  },
+  "elements-demo-resources": {
+    "npm": "@vaadin/elements-demo-resources",
+    "semver": "^2.1.0-pre.1"
+  }
+}
