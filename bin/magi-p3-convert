@@ -52,8 +52,12 @@ async function main() {
     runSync('git rm gulpfile.js');
   } catch(e) { }
 
-  // Commit changes
-  runSync('git commit -m "magi-cli: prepare for modulizer"');
+  // Try commit changes
+  try {
+    runSync('git commit -m "magi-cli: prepare for modulizer"');
+  } catch(e) {
+    // Commit failed. This is fine...
+  }
 
   // Load custom dependency-map.json and format
   const dependencyMap = require('../dependency-map.json');
