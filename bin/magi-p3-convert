@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 
 function serializeJson(json) {
-  return JSON.stringify(workingPackage, undefined, 2).split('\n').join(EOL) + EOL;
+  return JSON.stringify(json, undefined, 2).split('\n').join(EOL) + EOL;
 }
 
 const child_process = require('child_process');
@@ -51,6 +51,37 @@ async function main() {
     );
     runSync('git rm gulpfile.js');
   } catch(e) { }
+
+  // Change src paths of demo pages from .html to .js in demo/demos.json,
+  // collect demo paths to include in modulizer
+  const demoPaths = [];
+  try {
+    const demosJsonPath = path.resolve(process.cwd(), 'demo/demos.json');
+    fs.accessSync(demosJsonPath, fs.constants.R_OK | fs.constants.W_OK);
+    const demosJson = require(demosJsonPath);
+    (demosJson.pages || []).forEach(page => {
+      demoPaths.push('demo/' + page.src);
+      page.src = page.src.replace(/\.html$/, '.js');
+    });
+    fs.writeFileSync(demosJsonPath, serializeJson(demosJson));
+    runSync('git add demo/demos.json');
+  } catch(e) { }
+
+  // If demo pages are present, add them to bower.json main to modulize them
+  if (demoPaths.length) {
+    const bowerJsonPath = path.resolve(process.cwd(), 'bower.json');
+    const bowerJson = require(bowerJsonPath);
+    if (bowerJson.main) {
+      if (!Array.isArray(bowerJson.main)) {
+        bowerJson.main = [bowerJson.main];
+      }
+    } else {
+      bowerJson.main = [];
+    }
+    bowerJson.main = bowerJson.main.concat(demoPaths);
+    fs.writeFileSync(bowerJsonPath, serializeJson(bowerJson));
+    runSync('git add bower.json');
+  }
 
   // Try commit changes
   try {
