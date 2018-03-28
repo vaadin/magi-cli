@@ -122,5 +122,9 @@
   "elements-demo-resources": {
     "npm": "@vaadin/elements-demo-resources",
     "semver": "^2.1.0-pre.1"
+  },
+  "mock-http-request": {
+    "npm": "mock-http-request",
+    "semver": "git://github.com/abuinitski/MockHttpRequest#npm_fix"
   }
 }
