@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Vaadin Ltd",
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "^0.17.1",
