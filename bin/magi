@@ -24,6 +24,10 @@ program
     'Deploy version <version> on https://www.webjars.org'
   )
   .command(
+    'directory',
+    'Update https://vaadin.com/directory'
+  )
+  .command(
     'p3-convert [modulizerArgs...]',
     'Prepares package.json and runs modulizer with pre-configured arguments'
   )
