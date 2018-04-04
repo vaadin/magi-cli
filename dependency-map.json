@@ -126,5 +126,9 @@
   "mock-http-request": {
     "npm": "mock-http-request",
     "semver": "git://github.com/abuinitski/MockHttpRequest#npm_fix"
+  },
+  "sugar": {
+    "npm": "sugar",
+    "semver": "^2.0.0"
   }
 }
