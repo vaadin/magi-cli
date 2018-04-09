@@ -130,5 +130,13 @@
   "sugar": {
     "npm": "sugar",
     "semver": "^2.0.0"
+  },
+  "vaadin-license-checker": {
+    "npm": "@vaadin/vaadin-license-checker",
+    "semver": "^2.0.1"
+  },
+  "highcharts": {
+    "npm": "highcharts",
+    "semver": "^5.0.0"
   }
 }
