@@ -133,7 +133,7 @@
   },
   "vaadin-license-checker": {
     "npm": "@vaadin/vaadin-license-checker",
-    "semver": "^2.0.1"
+    "semver": "^2.0.1-pre.1"
   },
   "highcharts": {
     "npm": "highcharts",
