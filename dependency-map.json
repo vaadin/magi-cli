@@ -81,7 +81,7 @@
   },
   "vaadin-ordered-layout": {
     "npm": "@vaadin/vaadin-ordered-layout",
-    "semver": "^1.0.0-pre.1"
+    "semver": "^1.0.1-pre.1"
   },
   "vaadin-progress-bar": {
     "npm": "@vaadin/vaadin-progress-bar",
