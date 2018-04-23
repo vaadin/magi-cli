@@ -101,7 +101,7 @@
   },
   "vaadin-text-field": {
     "npm": "@vaadin/vaadin-text-field",
-    "semver": "^2.0.0-pre.1"
+    "semver": "^2.0.1-pre.1"
   },
   "vaadin-upload": {
     "npm": "@vaadin/vaadin-upload",
