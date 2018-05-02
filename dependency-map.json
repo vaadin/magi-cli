@@ -109,7 +109,7 @@
   },
   "vaadin-overlay": {
     "npm": "@vaadin/vaadin-overlay",
-    "semver": "^3.0.1-pre.1"
+    "semver": "^3.0.2-pre.1"
   },
   "vaadin-demo-helpers": {
     "npm": "@vaadin/vaadin-demo-helpers",
