@@ -67,10 +67,11 @@ async function main() {
     runSync('git add demo/demos.json');
   } catch(e) { }
 
+  const bowerJsonPath = path.resolve(process.cwd(), 'bower.json');
+  const bowerJson = require(bowerJsonPath);
+
   // If demo pages are present, add them to bower.json main to modulize them
   if (demoPaths.length) {
-    const bowerJsonPath = path.resolve(process.cwd(), 'bower.json');
-    const bowerJson = require(bowerJsonPath);
     if (bowerJson.main) {
       if (!Array.isArray(bowerJson.main)) {
         bowerJson.main = [bowerJson.main];
@@ -79,9 +80,17 @@ async function main() {
       bowerJson.main = [];
     }
     bowerJson.main = bowerJson.main.concat(demoPaths);
-    fs.writeFileSync(bowerJsonPath, serializeJson(bowerJson));
-    runSync('git add bower.json');
   }
+
+  // TODO(web-padawan): revert commit once the next 2.x release after 2.6.0 lands
+  const pinPolymer = '5f5d2c2';
+  bowerJson.dependencies.polymer = `Polymer/polymer#${pinPolymer}`;
+  bowerJson.resolutions = {polymer: `${pinPolymer}`};
+
+  fs.writeFileSync(bowerJsonPath, serializeJson(bowerJson));
+  runSync('git add bower.json');
+
+  runSync('rm -rf bower_components && bower i');
 
   // Try commit changes
   try {
