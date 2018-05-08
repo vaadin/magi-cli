@@ -1,19 +1,19 @@
 {
   "vaadin-themable-mixin": {
     "npm": "@vaadin/vaadin-themable-mixin",
-    "semver": "^1.1.5-pre.2"
+    "semver": "^1.1.5-pre.3"
   },
   "vaadin-control-state-mixin": {
     "npm": "@vaadin/vaadin-control-state-mixin",
-    "semver": "^2.0.3-pre.2"
+    "semver": "^2.0.3-pre.3"
   },
   "vaadin-list-mixin": {
     "npm": "@vaadin/vaadin-list-mixin",
-    "semver": "^2.0.0-pre.2"
+    "semver": "^2.0.0-pre.3"
   },
   "vaadin-element-mixin": {
     "npm": "@vaadin/vaadin-element-mixin",
-    "semver": "^1.0.2-pre.2"
+    "semver": "^1.0.2-pre.3"
   },
   "vaadin-usage-statistics": {
     "npm": "@vaadin/vaadin-usage-statistics",
@@ -21,95 +21,95 @@
   },
   "vaadin-development-mode-detector": {
     "npm": "@vaadin/vaadin-development-mode-detector",
-    "semver": "^1.0.3-pre.4"
+    "semver": "^1.0.3-pre.5"
   },
   "vaadin-button": {
     "npm": "@vaadin/vaadin-button",
-    "semver": "^2.0.0-pre.2"
+    "semver": "^2.0.0-pre.3"
   },
   "vaadin-checkbox": {
     "npm": "@vaadin/vaadin-checkbox",
-    "semver": "^2.0.0-pre.2"
+    "semver": "^2.0.0-pre.3"
   },
   "vaadin-combo-box": {
     "npm": "@vaadin/vaadin-combo-box",
-    "semver": "^4.0.0-pre.2"
+    "semver": "^4.0.1-pre.2"
   },
   "vaadin-context-menu": {
     "npm": "@vaadin/vaadin-context-menu",
-    "semver": "^4.0.0-pre.2"
+    "semver": "^4.0.0-pre.3"
   },
   "vaadin-date-picker": {
     "npm": "@vaadin/vaadin-date-picker",
-    "semver": "^3.0.0-pre.2"
+    "semver": "^3.0.0-pre.3"
   },
   "vaadin-dialog": {
     "npm": "@vaadin/vaadin-dialog",
-    "semver": "^2.0.0-pre.2"
+    "semver": "^2.0.0-pre.3"
   },
   "vaadin-dropdown-menu": {
     "npm": "@vaadin/vaadin-dropdown-menu",
-    "semver": "^1.0.0-pre.2"
+    "semver": "^1.0.0-pre.3"
   },
   "vaadin-form-layout": {
     "npm": "@vaadin/vaadin-form-layout",
-    "semver": "^2.0.0-pre.2"
+    "semver": "^2.0.0-pre.3"
   },
   "vaadin-grid": {
     "npm": "@vaadin/vaadin-grid",
-    "semver": "^5.0.0-pre.3"
+    "semver": "^5.0.0-pre.4"
   },
   "vaadin-icons": {
     "npm": "@vaadin/vaadin-icons",
-    "semver": "^4.1.4-pre.1"
+    "semver": "^4.1.4-pre.2"
   },
   "vaadin-item": {
     "npm": "@vaadin/vaadin-item",
-    "semver": "^2.0.0-pre.2"
+    "semver": "^2.0.0-pre.3"
   },
   "vaadin-list-box": {
     "npm": "@vaadin/vaadin-list-box",
-    "semver": "^1.0.1-pre.1"
+    "semver": "^1.0.1-pre.2"
   },
   "vaadin-lumo-styles": {
     "npm": "@vaadin/vaadin-lumo-styles",
-    "semver": "^1.0.0-pre.4"
+    "semver": "^1.0.0-pre.6"
   },
   "vaadin-notification": {
     "npm": "@vaadin/vaadin-notification",
-    "semver": "^1.0.0-pre.2"
+    "semver": "^1.0.0-pre.3"
   },
   "vaadin-ordered-layout": {
     "npm": "@vaadin/vaadin-ordered-layout",
-    "semver": "^1.0.1-pre.1"
+    "semver": "^1.0.1-pre.2"
   },
   "vaadin-progress-bar": {
     "npm": "@vaadin/vaadin-progress-bar",
-    "semver": "^1.0.0-pre.2"
+    "semver": "^1.0.0-pre.3"
   },
   "vaadin-radio-button": {
     "npm": "@vaadin/vaadin-radio-button",
-    "semver": "^1.0.0-pre.2"
+    "semver": "^1.0.0-pre.3"
   },
   "vaadin-split-layout": {
     "npm": "@vaadin/vaadin-split-layout",
-    "semver": "^4.0.0-pre.2"
+    "semver": "^4.0.0-pre.3"
   },
   "vaadin-tabs": {
     "npm": "@vaadin/vaadin-tabs",
-    "semver": "^2.0.0-pre.2"
+    "semver": "^2.0.0-pre.3"
   },
   "vaadin-text-field": {
     "npm": "@vaadin/vaadin-text-field",
-    "semver": "^2.0.1-pre.1"
+    "semver": "^2.0.1-pre.2"
   },
   "vaadin-upload": {
     "npm": "@vaadin/vaadin-upload",
-    "semver": "^4.0.0-pre.2"
+    "semver": "^4.0.0-pre.3"
   },
   "vaadin-overlay": {
     "npm": "@vaadin/vaadin-overlay",
-    "semver": "^3.0.2-pre.1"
+    "semver": "^3.0.2-pre.2"
   },
   "vaadin-demo-helpers": {
     "npm": "@vaadin/vaadin-demo-helpers",
