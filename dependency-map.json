@@ -133,6 +133,6 @@
   },
   "highcharts": {
     "npm": "highcharts",
-    "semver": "^5.0.0"
+    "semver": "^6.0.0"
   }
 }
