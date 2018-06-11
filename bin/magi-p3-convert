@@ -5,6 +5,7 @@ const {workingPackage} = require('../lib/tools.js');
 const {EOL} = require('os');
 const path = require('path');
 const fs = require('fs');
+const replace = require('replace-in-file');
 
 function serializeJson(json) {
   return JSON.stringify(json, undefined, 2).split('\n').join(EOL) + EOL;
@@ -52,6 +53,13 @@ async function main() {
     runSync('git rm gulpfile.js');
   } catch(e) { }
 
+  // Visit all source files and replace MAGI markers
+  replace.sync({
+    files: ['*.js', '*.html', 'src/*', 'demo/*', 'test/*', 'test/visual/*', 'theme/*/*'],
+    from: [/.*MAGI ADD (START|END).*\n/g, /.*MAGI REMOVE START[\s\S]*?MAGI REMOVE END.*\n/g],
+    to: ''
+  });
+
   // Change src paths of demo pages from .html to .js in demo/demos.json,
   // collect demo paths to include in modulizer
   const demoPaths = [];
@@ -94,7 +102,7 @@ async function main() {
 
   // Try commit changes
   try {
-    runSync('git commit -m "magi-cli: prepare for modulizer"');
+    runSync('git commit -m "magi-cli: prepare for modulizer" -a');
   } catch(e) {
     // Commit failed. This is fine...
   }
