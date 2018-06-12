@@ -45,13 +45,7 @@ async function main() {
   runSync('git add package.json');
 
   // Remove gulpfile.js, if present
-  try {
-    fs.accessSync(
-      path.resolve(process.cwd(), 'gulpfile.js'),
-      fs.constants.R_OK | fs.constants.W_OK
-    );
-    runSync('git rm gulpfile.js');
-  } catch(e) { }
+  runSync('git rm --ignore-unmatch gulpfile.js');
 
   // Visit all source files and replace MAGI markers
   replace.sync({
