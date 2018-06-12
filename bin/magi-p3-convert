@@ -113,6 +113,14 @@ async function main() {
       --delete-files bower.json \
       ${process.argv.slice(2).join(' ')} \
   `);
+
+  // Visit all generated js files and adjust certain imports
+  // Only in case of
+  replace.sync({
+    files: ['vaadin-chart*.js'],
+    from: ['import \'highcharts/es-modules/masters/highstock.src.js\''],
+    to: ['import Highcharts from \'highcharts/es-modules/masters/highstock.src.js\'']
+  });
 }
 
 main()
