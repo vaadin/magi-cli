@@ -15,6 +15,7 @@
     "axios": "^0.17.1",
     "commander": "^2.15.1",
     "configstore": "^3.1.1",
-    "github-api": "^3.0.0"
+    "github-api": "^3.0.0",
+    "replace-in-file": "^3.4.0"
   }
 }
