@@ -5,13 +5,10 @@ const {workingPackage} = require('../lib/tools.js');
 const {EOL} = require('os');
 const path = require('path');
 const fs = require('fs');
+const jsonfile = require('jsonfile');
 const replace = require('replace-in-file');
-
-function serializeJson(json) {
-  return JSON.stringify(json, undefined, 2).split('\n').join(EOL) + EOL;
-}
-
 const child_process = require('child_process');
+
 function runSync(cmd) {
   const result = child_process.spawnSync(cmd, {
     shell: true,
@@ -38,10 +35,7 @@ async function main() {
   delete workingPackage.scripts;
 
   // Format and write changes to package.json
-  fs.writeFileSync(
-    path.resolve(process.cwd(), 'package.json'),
-    serializeJson(workingPackage)
-  );
+  jsonfile.writeFileSync('package.json', workingPackage, {spaces: 2});
   runSync('git add package.json');
 
   // Remove gulpfile.js, if present
@@ -54,44 +48,34 @@ async function main() {
     to: ''
   });
 
-  // Change src paths of demo pages from .html to .js in demo/demos.json,
-  // collect demo paths to include in modulizer
-  const demoPaths = [];
-  try {
-    const demosJsonPath = path.resolve(process.cwd(), 'demo/demos.json');
-    fs.accessSync(demosJsonPath, fs.constants.R_OK | fs.constants.W_OK);
-    const demosJson = require(demosJsonPath);
+  // Modify bower.json and demo/demos.json files
+  const demosJson = jsonfile.readFileSync('demo/demos.json', {throws: false});
+  const bowerJson = jsonfile.readFileSync('bower.json');
+
+  if (demosJson) {
+    bowerJson.main = bowerJson.main || [];
+    bowerJson.main = Array.isArray(bowerJson.main) ? bowerJson.main : [bowerJson.main];
+
     (demosJson.pages || []).forEach(page => {
-      demoPaths.push('demo/' + page.src);
+      // Add demo page to bower.json main to modulize them
+      bowerJson.main.push('demo/' + page.src);
+      // Change demo path from .html to .js
       page.src = page.src.replace(/\.html$/, '.js');
     });
-    fs.writeFileSync(demosJsonPath, serializeJson(demosJson));
+
+    jsonfile.writeFileSync('demo/demos.json', demosJson, {spaces: 2});
     runSync('git add demo/demos.json');
-  } catch(e) { }
-
-  const bowerJsonPath = path.resolve(process.cwd(), 'bower.json');
-  const bowerJson = require(bowerJsonPath);
-
-  // If demo pages are present, add them to bower.json main to modulize them
-  if (demoPaths.length) {
-    if (bowerJson.main) {
-      if (!Array.isArray(bowerJson.main)) {
-        bowerJson.main = [bowerJson.main];
-      }
-    } else {
-      bowerJson.main = [];
-    }
-    bowerJson.main = bowerJson.main.concat(demoPaths);
   }
+
 
   // TODO(web-padawan): revert commit once the next 2.x release after 2.6.0 lands
   const pinPolymer = '5f5d2c2';
   bowerJson.dependencies.polymer = `Polymer/polymer#${pinPolymer}`;
   bowerJson.resolutions = {polymer: `${pinPolymer}`};
 
-  fs.writeFileSync(bowerJsonPath, serializeJson(bowerJson));
-  runSync('git add bower.json');
+  jsonfile.writeFileSync('bower.json', bowerJson, {spaces: 2});
 
+  runSync('git add bower.json');
   runSync('bower up');
 
   // Try commit changes
@@ -106,7 +90,7 @@ async function main() {
   const dmStrings = Object.entries(dependencyMap)
     .map(([from, to]) => `${from},${to.npm},${to.semver}`);
 
-  // Finally,
+  // Convert P2 to P3
   runSync(`
     modulizer \
       --dependency-mapping ${dmStrings.join(' ')} \
@@ -114,13 +98,13 @@ async function main() {
       ${process.argv.slice(2).join(' ')} \
   `);
 
-  // Visit all generated js files and adjust certain imports
-  // Only in case of
-  replace.sync({
-    files: ['vaadin-chart*.js'],
-    from: ['import \'highcharts/es-modules/masters/highstock.src.js\''],
-    to: ['import Highcharts from \'highcharts/es-modules/masters/highstock.src.js\'']
-  });
+  // Run custom project adjustments
+  const magiPost = jsonfile.readFileSync('magi-p3-post.json', {throws: false});
+  if (magiPost) {
+    // magiPost json is a valid options object for 'replace-in-file'
+    replace.sync(magiPost);
+    magiPost.remove && magiPost.remove.forEach(file => fs.unlinkSync(file));
+  }
 }
 
 main()
