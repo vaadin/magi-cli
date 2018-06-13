@@ -75,6 +75,10 @@
     "npm": "@vaadin/vaadin-lumo-styles",
     "semver": "^1.0.0-pre.6"
   },
+  "vaadin-material-styles": {
+    "npm": "@vaadin/vaadin-material-styles",
+    "semver": "^1.0.0-pre.1"
+  },
   "vaadin-notification": {
     "npm": "@vaadin/vaadin-notification",
     "semver": "^1.0.0-pre.3"
