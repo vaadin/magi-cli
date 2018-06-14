@@ -103,7 +103,8 @@ async function main() {
   if (magiPost) {
     // magiPost json is a valid options object for 'replace-in-file'
     replace.sync(magiPost);
-    magiPost.remove && magiPost.remove.forEach(file => fs.unlinkSync(file));
+    // we dont need magi-p3-post.json anymore
+    (magiPost.remove || []).concat('magi-p3-post.json').forEach(file => fs.unlinkSync(file));
   }
 }
 
