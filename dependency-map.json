@@ -33,7 +33,7 @@
   },
   "vaadin-combo-box": {
     "npm": "@vaadin/vaadin-combo-box",
-    "semver": "^4.0.1-pre.2"
+    "semver": "^4.1.0-alpha2"
   },
   "vaadin-context-menu": {
     "npm": "@vaadin/vaadin-context-menu",
