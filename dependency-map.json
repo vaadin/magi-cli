@@ -25,7 +25,7 @@
   },
   "vaadin-button": {
     "npm": "@vaadin/vaadin-button",
-    "semver": "^2.0.0-pre.3"
+    "semver": "^2.1.0-alpha2"
   },
   "vaadin-checkbox": {
     "npm": "@vaadin/vaadin-checkbox",
@@ -45,7 +45,7 @@
   },
   "vaadin-dialog": {
     "npm": "@vaadin/vaadin-dialog",
-    "semver": "^2.0.0-pre.3"
+    "semver": "^2.1.0-alpha2"
   },
   "vaadin-dropdown-menu": {
     "npm": "@vaadin/vaadin-dropdown-menu",
@@ -61,7 +61,7 @@
   },
   "vaadin-icons": {
     "npm": "@vaadin/vaadin-icons",
-    "semver": "^4.1.4-pre.2"
+    "semver": "^4.2.0-alpha1"
   },
   "vaadin-item": {
     "npm": "@vaadin/vaadin-item",
@@ -105,7 +105,7 @@
   },
   "vaadin-text-field": {
     "npm": "@vaadin/vaadin-text-field",
-    "semver": "^2.0.1-pre.2"
+    "semver": "^2.1.0-alpha2"
   },
   "vaadin-upload": {
     "npm": "@vaadin/vaadin-upload",
@@ -133,7 +133,7 @@
   },
   "vaadin-license-checker": {
     "npm": "@vaadin/vaadin-license-checker",
-    "semver": "^2.0.1-pre.1"
+    "semver": "^2.1.0-alpha1"
   },
   "highcharts": {
     "npm": "highcharts",
