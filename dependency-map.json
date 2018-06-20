@@ -138,5 +138,9 @@
   "highcharts": {
     "npm": "highcharts",
     "semver": "^6.0.0"
+  },
+  "polymer": {
+    "npm": "@polymer/polymer",
+    "semver": "^3.0.0"
   }
 }
