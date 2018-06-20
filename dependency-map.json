@@ -9,7 +9,7 @@
   },
   "vaadin-list-mixin": {
     "npm": "@vaadin/vaadin-list-mixin",
-    "semver": "^2.0.0-pre.3"
+    "semver": "^2.1.0-alpha1"
   },
   "vaadin-element-mixin": {
     "npm": "@vaadin/vaadin-element-mixin",
@@ -17,7 +17,7 @@
   },
   "vaadin-usage-statistics": {
     "npm": "@vaadin/vaadin-usage-statistics",
-    "semver": "^1.0.6-pre.2"
+    "semver": "^1.1.0-alpha1"
   },
   "vaadin-development-mode-detector": {
     "npm": "@vaadin/vaadin-development-mode-detector",
@@ -65,7 +65,7 @@
   },
   "vaadin-item": {
     "npm": "@vaadin/vaadin-item",
-    "semver": "^2.0.0-pre.3"
+    "semver": "^2.1.0-alpha2"
   },
   "vaadin-list-box": {
     "npm": "@vaadin/vaadin-list-box",
@@ -113,7 +113,7 @@
   },
   "vaadin-overlay": {
     "npm": "@vaadin/vaadin-overlay",
-    "semver": "^3.0.2-pre.2"
+    "semver": "^3.1.0-alpha2"
   },
   "vaadin-demo-helpers": {
     "npm": "@vaadin/vaadin-demo-helpers",
