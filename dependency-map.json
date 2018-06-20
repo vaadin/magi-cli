@@ -41,7 +41,7 @@
   },
   "vaadin-date-picker": {
     "npm": "@vaadin/vaadin-date-picker",
-    "semver": "^3.0.0-pre.3"
+    "semver": "^3.2.0-alpha3"
   },
   "vaadin-dialog": {
     "npm": "@vaadin/vaadin-dialog",
@@ -69,7 +69,7 @@
   },
   "vaadin-list-box": {
     "npm": "@vaadin/vaadin-list-box",
-    "semver": "^1.0.1-pre.2"
+    "semver": "^1.1.0-alpha2"
   },
   "vaadin-lumo-styles": {
     "npm": "@vaadin/vaadin-lumo-styles",
@@ -85,15 +85,15 @@
   },
   "vaadin-ordered-layout": {
     "npm": "@vaadin/vaadin-ordered-layout",
-    "semver": "^1.0.1-pre.2"
+    "semver": "^1.1.0-alpha2"
   },
   "vaadin-progress-bar": {
     "npm": "@vaadin/vaadin-progress-bar",
-    "semver": "^1.0.0-pre.3"
+    "semver": "^1.1.0-alpha2"
   },
   "vaadin-radio-button": {
     "npm": "@vaadin/vaadin-radio-button",
-    "semver": "^1.0.0-pre.3"
+    "semver": "^1.1.0-alpha2"
   },
   "vaadin-split-layout": {
     "npm": "@vaadin/vaadin-split-layout",
@@ -101,7 +101,7 @@
   },
   "vaadin-tabs": {
     "npm": "@vaadin/vaadin-tabs",
-    "semver": "^2.0.0-pre.3"
+    "semver": "^2.1.0-alpha2"
   },
   "vaadin-text-field": {
     "npm": "@vaadin/vaadin-text-field",
