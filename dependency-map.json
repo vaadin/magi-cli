@@ -29,7 +29,7 @@
   },
   "vaadin-checkbox": {
     "npm": "@vaadin/vaadin-checkbox",
-    "semver": "^2.0.0-pre.3"
+    "semver": "^2.2.0-alpha2"
   },
   "vaadin-combo-box": {
     "npm": "@vaadin/vaadin-combo-box",
