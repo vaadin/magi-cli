@@ -57,7 +57,7 @@
   },
   "vaadin-grid": {
     "npm": "@vaadin/vaadin-grid",
-    "semver": "^5.0.0-pre.4"
+    "semver": "^5.1.0-alpha2"
   },
   "vaadin-icons": {
     "npm": "@vaadin/vaadin-icons",
@@ -81,7 +81,7 @@
   },
   "vaadin-notification": {
     "npm": "@vaadin/vaadin-notification",
-    "semver": "^1.0.0-pre.3"
+    "semver": "^1.1.0-alpha2"
   },
   "vaadin-ordered-layout": {
     "npm": "@vaadin/vaadin-ordered-layout",
@@ -97,7 +97,7 @@
   },
   "vaadin-split-layout": {
     "npm": "@vaadin/vaadin-split-layout",
-    "semver": "^4.0.0-pre.3"
+    "semver": "^4.1.0-alpha2"
   },
   "vaadin-tabs": {
     "npm": "@vaadin/vaadin-tabs",
