@@ -22,7 +22,7 @@ async function main() {
     throw 'not enough arguments, expected <version>';
   }
 
-  const element = workingPackage.name;
+  const element = workingPackage.elementName;
   const [tag] = program.args;
   const version = tag.replace(/^v/, '');
 

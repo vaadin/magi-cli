@@ -35,6 +35,7 @@ async function main() {
   delete workingPackage.scripts;
 
   // Format and write changes to package.json
+  delete workingPackage.elementName;
   jsonfile.writeFileSync('package.json', workingPackage, {spaces: 2});
   runSync('git add package.json');
 
