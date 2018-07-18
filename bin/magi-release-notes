@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-const {run, workingPackage} = require('../lib/tools.js');
+const {run, elementName} = require('../lib/tools.js');
 
 const program = require('commander');
 program
@@ -31,10 +31,10 @@ async function main(fromVersion, toVersion) {
   const changeLog = await run(`git log --no-merges --pretty=format:"- %h %w(0,0,2)%B" ${fromVersion}..${toVersion}`);
 
   console.log(`\
-[Live Demo →](https://cdn.vaadin.com/${workingPackage.elementName}/${toVersionNumber}/demo/)
-[API Documentation →](https://cdn.vaadin.com/${workingPackage.elementName}/${toVersionNumber}/#/elements/${workingPackage.elementName})
+[Live Demo →](https://cdn.vaadin.com/${elementName}/${toVersionNumber}/demo/)
+[API Documentation →](https://cdn.vaadin.com/${elementName}/${toVersionNumber}/#/elements/${elementName})
 
-### Changes Since [${fromVersion}](https://github.com/vaadin/${workingPackage.elementName}/releases/tag/${fromVersion}):
+### Changes Since [${fromVersion}](https://github.com/vaadin/${elementName}/releases/tag/${fromVersion}):
 
 ${reformatChangeLog(changeLog)}
 `);
