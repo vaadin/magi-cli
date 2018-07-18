@@ -6,7 +6,7 @@ program
   .option('--auth', 'Ask and replace saved Bender authentication credentials')
   .parse(process.argv);
 
-const {workingPackage} = require('../lib/tools.js');
+const {elementName} = require('../lib/tools.js');
 const {getBenderApi} = require('../lib/bender-api.js');
 
 const readline = require('readline');
@@ -22,7 +22,6 @@ async function main() {
     throw 'not enough arguments, expected <version>';
   }
 
-  const element = workingPackage.name;
   const [tag] = program.args;
   const version = tag.replace(/^v/, '');
 
@@ -30,7 +29,7 @@ async function main() {
     buildType: {id: 'CoreElements_DeployTest_Mdeploy'},
     properties: {
       property: [
-        {name: 'element', value: element},
+        {name: 'element', value: elementName},
         {name: 'tag', value: tag},
         {name: 'version', value: version}
       ]

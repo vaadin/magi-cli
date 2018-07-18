@@ -5,7 +5,7 @@ const program = require('commander');
 program
   .parse(process.argv);
 
-const {workingPackage, createAPI} = require('../lib/tools.js');
+const {elementName, createAPI} = require('../lib/tools.js');
 
 async function main() {
 
@@ -20,7 +20,7 @@ async function main() {
   }
 
   const api = createAPI({
-    baseURL: `https://vaadin.com/vaadincom/directory-service/webcomponents?owner=vaadin&name=${workingPackage.name}`,
+    baseURL: `https://vaadin.com/vaadincom/directory-service/webcomponents?owner=vaadin&name=${elementName}`,
     headers: {'Accept': '*/*'},
     responseType: 'stream',
     auth: {
