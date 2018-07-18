@@ -67,11 +67,13 @@ async function main() {
     runSync('git add demo/demos.json');
   }
 
-
-  // TODO(web-padawan): revert commit once the next 2.x release after 2.6.0 lands
-  const pinPolymer = '5f5d2c2';
-  bowerJson.dependencies.polymer = `Polymer/polymer#${pinPolymer}`;
-  bowerJson.resolutions = {polymer: `${pinPolymer}`};
+  const hasPolymerDependency = bowerJson.dependencies && bowerJson.dependencies.polymer;
+  if (hasPolymerDependency) {
+    // TODO(web-padawan): revert commit once the next 2.x release after 2.6.0 lands
+    const pinPolymer = '5f5d2c2';
+    bowerJson.dependencies.polymer = `Polymer/polymer#${pinPolymer}`;
+    bowerJson.resolutions = {polymer: `${pinPolymer}`};
+  }
 
   jsonfile.writeFileSync('bower.json', bowerJson, {spaces: 2});
 
