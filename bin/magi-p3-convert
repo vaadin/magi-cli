@@ -97,7 +97,7 @@ async function main() {
     Object.entries(bowerJson.devDependencies)
     .concat(Object.entries(bowerJson.dependencies))
     .filter(([from, to]) => {
-      return /^(vaadin-|elements-demo-resources)/.test(from);
+      return /^vaadin-/.test(from);
     })
     .map(([from, to]) => `${from},@vaadin/${from},${to.replace(/^.*#/, '')}`)
   );
