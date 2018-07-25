@@ -14,5 +14,9 @@
   "polymer": {
     "npm": "@polymer/polymer",
     "semver": "^3.0.0"
+  },
+  "elements-demo-resources": {
+    "npm": "@vaadin/elements-demo-resources",
+    "semver": "^2.1.0"
   }
 }
