@@ -87,10 +87,20 @@ async function main() {
     // Commit failed. This is fine...
   }
 
-  // Load custom dependency-map.json and format
+  // Load custom dependency-map.json and generate dependency mapping string
   const dependencyMap = require('../dependency-map.json');
-  const dmStrings = Object.entries(dependencyMap)
+  let dmStrings = Object.entries(dependencyMap)
     .map(([from, to]) => `${from},${to.npm},${to.semver}`);
+
+  // Append bower dependendies to dependency mapping
+  dmStrings = dmStrings.concat(
+    Object.entries(bowerJson.devDependencies)
+    .concat(Object.entries(bowerJson.dependencies))
+    .filter(([from, to]) => {
+      return /^(vaadin-|elements-demo-resources)/.test(from);
+    })
+    .map(([from, to]) => `${from},@vaadin/${from},${to.replace(/^.*#/, '')}`)
+  );
 
   // Convert P2 to P3
   runSync(`
