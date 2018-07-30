@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander');
+const readline = require('readline');
+const fs = require('fs');
+
+program
+  .arguments('<version>')
+  .parse(process.argv);
+
+if (program.args.length < 1) {
+  console.error('not enough arguments, expected <version>');
+  process.exit(1);
+}
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+const {run, workingPackage} = require('../lib/tools.js');
+const {getGitHubApi} = require('../lib/github-api.js');
+
+async function main(version) {
+  const gh = await getGitHubApi(program.auth);
+
+  /* Read current version */
+  const jsonfile = require('jsonfile');
+  const packageJson = jsonfile.readFileSync('package.json');
+  const previousVersion = packageJson.version;
+
+  const newVersion = version.replace(/^v/, '');
+  if (previousVersion === newVersion) {
+    console.error('The new version cannot be the same');
+    process.exit(1);
+  }
+
+  console.log(`Creating ${newVersion} tag and commit`);
+  await run(`npm version ${newVersion}`);
+
+  console.log(`Push tag and commit to github`);
+  await run(`git push origin master && git push origin master --tags`);
+
+  console.log(`Release notes generation`);
+  const releaseNotes = await run(`magi release-notes v${previousVersion} v${newVersion}`);
+
+  await fs.writeFileSync('release-notes', releaseNotes);
+  await run(`code release-notes`);
+  await askConfirmation();
+
+  console.log(`Generating the release configuration`);
+  const updatedReleaseNotes = await fs.readFileSync('release-notes').toString();
+  await fs.unlink('release-notes');
+
+  const releaseOptions = {
+    "tag_name": `v${newVersion}`,
+    'target_commitish': 'master',
+    "name": `v${newVersion}`,
+    "body": updatedReleaseNotes,
+    "draft": false,
+    "prerelease": false
+  }
+
+  var [user, repo] = workingPackage.repository.split('/');
+  const repository = gh.getRepo(user, repo);
+
+  console.log(`Creating and pushing the release`);
+  await repository.createRelease(
+    releaseOptions,
+    () => {
+      console.log('Release created!')
+  });
+
+  console.log(`Deploying to demo server`);
+  await run(`magi deploy ${newVersion}`);
+
+  console.log(`Deploying to webjar`);
+  await run(`magi webjar ${newVersion}`);
+
+  console.log(`Update dependencies`);
+  await run(`rm -fr bower_components node_modules && bower install`);
+
+  console.log(`Converting to polymer 3`);
+  await run(`magi p3-convert --out . --import-style=name`);
+
+  console.log(`Publishing to npm`);
+  await run(`npm publish --access public`);
+
+  console.log(`Reverting P3 back to P2`);
+  await run(`git reset --hard HEAD^ && git clean -fd`);
+
+  console.log(`Updating dependencies`);
+  await run(`rm -fr bower_components node_modules && bower i && npm i`);
+}
+
+function askConfirmation() {
+  return new Promise((resolve) => rl.question('Press Enter once you are done with the release notes... ', resolve));
+}
+
+
+main(...program.args)
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
