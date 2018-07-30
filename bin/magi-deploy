@@ -6,7 +6,7 @@ program
   .option('--auth', 'Ask and replace saved Bender authentication credentials')
   .parse(process.argv);
 
-const {elementName} = require('../lib/tools.js');
+const {workingPackage, ghAccount} = require('../lib/tools.js');
 const {getBenderApi} = require('../lib/bender-api.js');
 
 const readline = require('readline');
@@ -25,11 +25,14 @@ async function main() {
   const [tag] = program.args;
   const version = tag.replace(/^v/, '');
 
+  const tmp = workingPackage.repository.split('/');
+
   const response = await api.post(`/buildQueue`, {
     buildType: {id: 'CoreElements_DeployTest_Mdeploy'},
     properties: {
       property: [
-        {name: 'element', value: elementName},
+        {name: 'repo', value: tmp[0]},
+        {name: 'element', value: tmp[1]},
         {name: 'tag', value: tag},
         {name: 'version', value: version}
       ]
@@ -47,7 +50,11 @@ async function main() {
     const dots = [...Array(n%3+2)].join('.');
     process.stdout.write(`[${response.data.state}] ${response.data.statusText}${dots}`);
     if (response.data.state === 'finished') {
-      break;
+      if (response.data.status === 'SUCCESS') {
+        break;
+      } else {
+        throw new Error('\n Error deploying element ! \n' + response.data.statusText)
+      }
     }
     await timeout(1000);
     n++;
