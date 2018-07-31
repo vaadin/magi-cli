@@ -14,16 +14,10 @@ if (program.args.length < 1) {
   process.exit(1);
 }
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-const {run, workingPackage} = require('../lib/tools.js');
+const {exe, ask, workingPackage, elementName} = require('../lib/tools.js');
 const {getGitHubApi} = require('../lib/github-api.js');
 
 async function main(version) {
-  const gh = await getGitHubApi(program.auth);
 
   /* Read current version */
   const jsonfile = require('jsonfile');
@@ -32,72 +26,70 @@ async function main(version) {
 
   const newVersion = version.replace(/^v/, '');
   if (previousVersion === newVersion) {
-    console.error('The new version cannot be the same');
+    console.error(`The new version cannot be the same to the previous version ${previousVersion}`);
     process.exit(1);
   }
 
   console.log(`Creating ${newVersion} tag and commit`);
-  await run(`npm version ${newVersion}`);
+  await exe(`npm version ${newVersion}`, true);
 
-  console.log(`Push tag and commit to github`);
-  await run(`git push origin master && git push origin master --tags`);
+  const gh = await getGitHubApi(program.auth);
+  console.log('Push tag and commit to github');
+  await exe('git push origin master', true);
+  await exe('git push origin master --tags', true);
+  console.log(`Tagged in GH at: https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`);
 
-  console.log(`Release notes generation`);
-  const releaseNotes = await run(`magi release-notes v${previousVersion} v${newVersion}`);
-
-  await fs.writeFileSync('release-notes', releaseNotes);
-  await run(`code release-notes`);
-  await askConfirmation();
-
-  console.log(`Generating the release configuration`);
-  const updatedReleaseNotes = await fs.readFileSync('release-notes').toString();
-  await fs.unlink('release-notes');
+  console.log('Generating Release Notes');
+  const releaseNotes = await exe(`magi release-notes v${previousVersion} v${newVersion}`, true);
 
   const releaseOptions = {
     "tag_name": `v${newVersion}`,
     'target_commitish': 'master',
     "name": `v${newVersion}`,
-    "body": updatedReleaseNotes,
-    "draft": false,
+    "body": releaseNotes,
+    "draft": true,
     "prerelease": false
   }
 
   var [user, repo] = workingPackage.repository.split('/');
   const repository = gh.getRepo(user, repo);
 
-  console.log(`Creating and pushing the release`);
-  await repository.createRelease(
-    releaseOptions,
-    () => {
-      console.log('Release created!')
+  console.log('Creating and pushing the release');
+  await repository.createRelease(releaseOptions, (ignore, data) => {
+    const url = data.html_url.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
+      console.log('Release created, you can modify release notes at: ', url);
   });
 
-  console.log(`Deploying to demo server`);
-  await run(`magi deploy ${newVersion}`);
+  await ask('Press Enter once you are done with the release notes...');
 
-  console.log(`Deploying to webjar`);
-  await run(`magi webjar ${newVersion}`);
+  console.log('Update dependencies');
+  await exe('rm -fr bower_components node_modules', true);
+  await exe('bower install', true);
 
-  console.log(`Update dependencies`);
-  await run(`rm -fr bower_components node_modules && bower install`);
+  console.log('Converting to polymer 3');
+  await exe('magi p3-convert --out . --import-style=name');
 
-  console.log(`Converting to polymer 3`);
-  await run(`magi p3-convert --out . --import-style=name`);
+  console.log('Publishing to npm', true);
+  await exe('npm publish --access public');
+  console.log(`Deployed in NPM at: https://www.npmjs.com/package/${workingPackage.name}`);
 
-  console.log(`Publishing to npm`);
-  await run(`npm publish --access public`);
+  console.log('Reverting P3 back to P2');
+  await exe('git reset --hard HEAD^', true);
+  await exe('git clean -fd', true);
 
-  console.log(`Reverting P3 back to P2`);
-  await run(`git reset --hard HEAD^ && git clean -fd`);
+  console.log('Updating dependencies');
+  await exe('rm -fr bower_components node_modules', true);
+  await exe('bower i', true);
+  await exe('npm i', true);
 
-  console.log(`Updating dependencies`);
-  await run(`rm -fr bower_components node_modules && bower i && npm i`);
+  console.log('Deploying to demo server');
+  await exe(`magi deploy v${newVersion}`);
+  console.log(`Deployed in CDN at: https://cdn.vaadin.com/${elementName}/${newVersion}/demo/`);
+
+  console.log('Deploying to webjar');
+  await exe(`magi webjar v${newVersion}`);
+  console.log(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
 }
-
-function askConfirmation() {
-  return new Promise((resolve) => rl.question('Press Enter once you are done with the release notes... ', resolve));
-}
-
 
 main(...program.args)
   .then(() => process.exit(0))
