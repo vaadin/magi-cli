@@ -5,6 +5,14 @@ const program = require('commander');
 const readline = require('readline');
 const fs = require('fs');
 
+function info(msg) {
+  console.log(' [magi] 🌀  \x1b[36m%s\x1b[0m ...', msg);
+}
+
+function done(msg) {
+  console.log(' [magi] 🎉  \x1b[33m%s\x1b[0m \n', msg.replace(/(https?:[^\s]+)/, '\x1b[32m $1\x1b[0m'));
+}
+
 program
   .arguments('<version>')
   .parse(process.argv);
@@ -30,16 +38,16 @@ async function main(version) {
     process.exit(1);
   }
 
-  console.log(`Creating ${newVersion} tag and commit`);
+  info(`Creating ${newVersion} tag and commit`);
   await exe(`npm version ${newVersion}`, true);
 
   const gh = await getGitHubApi(program.auth);
-  console.log('Push tag and commit to github');
+  info('Push tag and commit to github');
   await exe('git push origin master', true);
   await exe('git push origin master --tags', true);
-  console.log(`Tagged in GH at: https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`);
+  done(`Tagged in GH at: https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`);
 
-  console.log('Generating Release Notes');
+  info('Generating Release Notes');
   const releaseNotes = await exe(`magi release-notes v${previousVersion} v${newVersion}`, true);
 
   const releaseOptions = {
@@ -54,41 +62,44 @@ async function main(version) {
   var [user, repo] = workingPackage.repository.split('/');
   const repository = gh.getRepo(user, repo);
 
-  console.log('Creating and pushing the release');
+  info('Creating and pushing the release');
   await repository.createRelease(releaseOptions, (ignore, data) => {
     const url = data.html_url.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
-      console.log('Release created, you can modify release notes at: ', url);
+      done(`Release created, you can modify release notes at: ${url}`);
   });
 
   await ask('Press Enter once you are done with the release notes...');
 
-  console.log('Update dependencies');
+  info('Update dependencies');
   await exe('rm -fr bower_components node_modules', true);
   await exe('bower install', true);
 
-  console.log('Converting to polymer 3');
+  info('Converting to polymer 3');
   await exe('magi p3-convert --out . --import-style=name');
+  done('Converted to Polymer 3')
 
-  console.log('Publishing to npm', true);
+  info('Publishing to npm', true);
   await exe('npm publish --access public');
-  console.log(`Deployed in NPM at: https://www.npmjs.com/package/${workingPackage.name}`);
+  done(`Deployed in NPM at: https://www.npmjs.com/package/${workingPackage.name}`);
 
-  console.log('Reverting P3 back to P2');
+  info('Reverting P3 back to P2');
   await exe('git reset --hard HEAD^', true);
   await exe('git clean -fd', true);
 
-  console.log('Updating dependencies');
+  info('Updating dependencies');
   await exe('rm -fr bower_components node_modules', true);
   await exe('bower i', true);
   await exe('npm i', true);
 
-  console.log('Deploying to demo server');
+  info('Deploying to demo server');
   await exe(`magi deploy v${newVersion}`);
-  console.log(`Deployed in CDN at: https://cdn.vaadin.com/${elementName}/${newVersion}/demo/`);
+  done(`Deployed in CDN at: https://cdn.vaadin.com/${elementName}/${newVersion}/demo/`);
 
-  console.log('Deploying to webjar');
+  info('Deploying to webjar');
   await exe(`magi webjar v${newVersion}`);
-  console.log(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
+  done(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
+
+  done(`!!! 😃 ELEMENT: ${elementName} VERSION: ${newVersion} Successfully Released and Deployed 😃 !!!`);
 }
 
 main(...program.args)
