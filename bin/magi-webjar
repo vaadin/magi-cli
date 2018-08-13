@@ -7,35 +7,56 @@ program
 
 const {workingPackage, elementName, createAPI} = require('../lib/tools.js');
 
+let mavenUrl;
+
 async function main() {
+
+  if (program.args.length < 1) {
+    throw 'not enough arguments, expected <version>';
+  }
+  const version = program.args[0].replace(/^v/, '');
+
+  mavenUrl = `https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${version}`;
+  const mavenApi = createAPI({
+    baseURL: mavenUrl
+  });
+
+  try {
+    // Do not deploy if version is already in maven repo
+    await mavenApi.get();
+    console.log(`${elementName} ${version} was already deployed`);
+    return;
+  } catch (ignore) {
+  }
+
   const api = createAPI({
     baseURL: 'https://www.webjars.org',
     headers: {'Accept': 'text/plain'},
     responseType: 'stream'
   });
-
-  if (program.args.length < 1) {
-    throw 'not enough arguments, expected <version>';
-  }
-
   const query = require('querystring').stringify({
     webJarType: 'BowerGitHub',
     nameOrUrlish: `https://github.com/${workingPackage.repository}`,
-    version: program.args[0]
+    version: version
   });
 
   const response = await api.post(`/deploy?${query}`);
-
   response.data.pipe(process.stdout);
 
-  return new Promise((resolve) => response.data.on('end', resolve));
+  return new Promise((resolve, reject) => response.data.on('end', async () => {
+    try {
+      // Check that version was correctly deployed to maven
+      await mavenApi.get();
+      resolve();
+    } catch (e) {
+      reject(`Error deploying element at: ${mavenUrl}\nCheck that ${elementName} ${version} has been tagged in github.`);
+    }
+  }));
 }
 
 main(...program.args)
   .then(() => {
-    const [tag] = program.args;
-    const version = tag.replace(/^v/, '');
-    console.log(`Check deployed URL: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/vaadin/${elementName}/${version}`);
+    console.log(`WebJar Sucessfully Deployed at: ${mavenUrl}`);
     process.exit(0);
   })
   .catch((e) => {
