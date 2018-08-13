@@ -6,7 +6,7 @@ program
   .option('--auth', 'Ask and replace saved Bender authentication credentials')
   .parse(process.argv);
 
-const {workingPackage, ghAccount} = require('../lib/tools.js');
+const {workingPackage} = require('../lib/tools.js');
 const {getBenderApi} = require('../lib/bender-api.js');
 
 const readline = require('readline');

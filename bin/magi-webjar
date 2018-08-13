@@ -43,7 +43,7 @@ async function main() {
   const response = await api.post(`/deploy?${query}`);
   response.data.pipe(process.stdout);
 
-  return new Promise((resolve, reject) => response.data.on('end', async function() {
+  return new Promise((resolve, reject) => response.data.on('end', async () => {
     try {
       // Check that version was correctly deployed to maven
       await mavenApi.get();
