@@ -28,7 +28,7 @@ program
     'Update https://vaadin.com/directory'
   )
   .command(
-    'release <version>',
+    'release <version> [--draft]',
     'Release new <version> of the component and publish to npm'
   )
   .command(

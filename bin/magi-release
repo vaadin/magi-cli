@@ -15,6 +15,7 @@ function done(msg) {
 
 program
   .arguments('<version>')
+  .option('--draft', 'Create the release in draft mode')
   .parse(process.argv);
 
 if (program.args.length < 1) {
@@ -42,20 +43,26 @@ async function main(version) {
   await exe(`npm version ${newVersion}`, true);
 
   const gh = await getGitHubApi(program.auth);
-  info('Push tag and commit to github');
-  await exe('git push origin master', true);
-  await exe('git push origin master --tags', true);
+
+  let branch = await exe('git symbolic-ref --short HEAD', true);
+  branch = branch.replace(/\n/, '');
+
+  info(`Push tag and commit to branch ${branch} in github`);
+  await exe(`git push origin ${branch}`, true);
+  await exe(`git push origin ${branch} --tags`, true);
   done(`Tagged in GH at: https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`);
 
   info('Generating Release Notes');
   const releaseNotes = await exe(`magi release-notes v${previousVersion} v${newVersion}`, true);
 
+  const draft = !!program.draft;
+
   const releaseOptions = {
     "tag_name": `v${newVersion}`,
-    'target_commitish': 'master',
+    'target_commitish': branch,
     "name": `v${newVersion}`,
     "body": releaseNotes,
-    "draft": true,
+    "draft": draft,
     "prerelease": false
   }
 
@@ -63,16 +70,17 @@ async function main(version) {
   const repository = gh.getRepo(user, repo);
 
   info('Creating and pushing the release');
+  let releaseUrl;
   await repository.createRelease(releaseOptions, (ignore, data) => {
-    const url = data.html_url.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
-      done(`Release created, you can modify release notes at: ${url}`);
+    releaseUrl = data.html_url.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
   });
 
-  await ask('Press Enter once you are done with the release notes...');
-
-  info('Update dependencies');
-  await exe('rm -fr bower_components node_modules', true);
-  await exe('bower install', true);
+  if (draft) {
+    done(`Release created in draft mode, modify notes at: ${releaseUrl}`);
+    await ask('Press Enter once you are done with the release notes...');
+  } else {
+    done(`Release created at: ${releaseUrl}`);
+  }
 
   info('Converting to polymer 3');
   await exe('magi p3-convert --out . --import-style=name');
@@ -85,11 +93,6 @@ async function main(version) {
   info('Reverting P3 back to P2');
   await exe('git reset --hard HEAD^', true);
   await exe('git clean -fd', true);
-
-  info('Updating dependencies');
-  await exe('rm -fr bower_components node_modules', true);
-  await exe('bower i', true);
-  await exe('npm i', true);
 
   info('Deploying to demo server');
   await exe(`magi deploy v${newVersion}`);
