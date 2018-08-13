@@ -37,71 +37,101 @@ async function main(version) {
   const packageJson = jsonfile.readFileSync('package.json');
   const previousVersion = packageJson.version;
 
-  const newVersion = version.replace(/^v/, '');
-  if (previousVersion === newVersion) {
-    error(`The new version cannot be the same to the previous version ${previousVersion}`);
-    process.exit(1);
-  }
-
-  info(`Creating ${newVersion} tag and commit`);
-  await exe(`npm version ${newVersion}`, true);
-
+  /* open repository connection in GH */
   const gh = await getGitHubApi(program.auth);
-
-  let branch = await exe('git symbolic-ref --short HEAD', true);
-  branch = branch.replace(/\n/, '');
-
-  info(`Push tag and commit to branch ${branch} in github`);
-  await exe(`git push origin ${branch}`, true);
-  await exe(`git push origin ${branch} --tags`, true);
-  done(`Tagged in GH at: https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`);
-
-  info('Generating Release Notes');
-  const releaseNotes = await exe(`magi release-notes v${previousVersion} v${newVersion}`, true);
-
-  const draft = !!program.draft;
-
-  const releaseOptions = {
-    "tag_name": `v${newVersion}`,
-    "target_commitish": branch,
-    "name": `v${newVersion}`,
-    "body": releaseNotes,
-    "draft": draft,
-    "prerelease": false
-  }
-
   var [user, repo] = workingPackage.repository.split('/');
   const repository = gh.getRepo(user, repo);
 
-  info('Creating and pushing the release');
-  let releaseUrl;
-  await repository.createRelease(releaseOptions, (ignore, data) => {
-    releaseUrl = data.html_url.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
-  });
+  /* We use current branch not necessarily `master` */
+  let branch = (await exe('git symbolic-ref --short HEAD', true).replace(/\n/, '');
 
-  if (draft) {
-    done(`Release created in draft mode, modify notes at: ${releaseUrl}`);
-    await ask('Press Enter once you are done with the release notes...');
+  /* Check if newVersion is already tagged */
+  const newVersion = version.replace(/^v/, '');
+  let pushVersion = true;
+  if (previousVersion === newVersion) {
+    done(`Already committed version v${newVersion}`);
+    await repository.listTags().then(response => {
+      pushVersion = response.data.filter(tag => tag.name.replace(/^v/, '') == newVersion).length === 0;
+    });
   } else {
-    done(`Release created at: ${releaseUrl}`);
+    info(`Creating ${newVersion} tag and commit`);
+    await exe(`npm version ${newVersion}`, true);
   }
 
-  info('Converting to polymer 3');
-  await exe('magi p3-convert --out . --import-style=name');
-  done('Converted to Polymer 3')
+  /* Check if tag is already pushed to GH */
+  const tagUrl = `https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`;
+  if (pushVersion) {
 
-  info('Publishing to npm', true);
-  await exe('npm publish --access public');
-  done(`Deployed in NPM at: https://www.npmjs.com/package/${workingPackage.name}`);
+    info(`Push tag and commit to branch ${branch} in github`);
+    await exe(`git push origin ${branch}`, true);
+    await exe(`git push origin ${branch} --tags`, true);
+    done(`Tagged in GH at: ${tagUrl}`);
+  } else {
+    done(`Already Tagged in GH at: ${tagUrl}`);
+  }
 
-  info('Reverting P3 back to P2');
-  await exe('git reset --hard HEAD^', true);
-  await exe('git clean -fd', true);
+  /* Check if version has already released in GH */
+  let releaseUrl;
+  let draft = !!program.draft;
+  await repository.listReleases().then(response => {
+    const release = response.data.filter(release => release.tag_name.replace(/^v/, '') == newVersion)[0];
+    release && (releaseUrl = release.html_url, draft = release.draft);
+  });
 
+  if (releaseUrl) {
+    done(`Release Already Created at: ${releaseUrl}`);
+  } else {
+    info('Generating Release Notes');
+    const releaseNotes = await exe(`magi release-notes v${previousVersion} v${newVersion}`, true);
+
+    const releaseOptions = {
+      "tag_name": `v${newVersion}`,
+      "target_commitish": branch,
+      "name": `v${newVersion}`,
+      "body": releaseNotes,
+      "draft": draft,
+      "prerelease": false
+    }
+    info('Creating and pushing the release');
+    await repository.createRelease(releaseOptions, (ignore, data) => {
+      releaseUrl =  data.html_url;
+      done(`Release created at: ${data.html_url}`);
+    });
+  }
+
+  // If version is saved as a draft we wait until user modifies notes and releases version
+  if (draft) {
+    releaseUrl = releaseUrl.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
+    done(`You can modify release notes at: ${releaseUrl}`);
+    await ask('Press Enter once you are done with the release notes...');
+  }
+
+  /* Check whether this version is already publised in NPM */
+  const npmInfo = await exe(`npm info ${workingPackage.name}@${newVersion}`, true);
+  let npmUrl = `https://www.npmjs.com/package/${workingPackage.name}`;
+
+  if (npmInfo) {
+    done(`Release Already deployed in NPM: ${npmUrl}`);
+  } else {
+    info('Converting to polymer 3');
+    await exe('magi p3-convert --out . --import-style=name');
+    done('Converted to Polymer 3')
+
+    info('Publishing to npm', true);
+    await exe('npm publish --access public');
+    done(`Deployed in NPM at: ${npmUrl}`);
+
+    info('Reverting P3 back to P2');
+    await exe('git reset --hard HEAD^', true);
+    await exe('git clean -fd', true);
+  }
+
+  /* CDN */
   info('Deploying to demo server');
   await exe(`magi deploy v${newVersion}`);
   done(`Deployed in CDN at: https://cdn.vaadin.com/${elementName}/${newVersion}/demo/`);
 
+  /* WebJar */
   info('Deploying to webjar');
   await exe(`magi webjar v${newVersion}`);
   done(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);

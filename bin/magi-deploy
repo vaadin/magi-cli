@@ -6,7 +6,7 @@ program
   .option('--auth', 'Ask and replace saved Bender authentication credentials')
   .parse(process.argv);
 
-const {workingPackage} = require('../lib/tools.js');
+const {workingPackage, elementName, createAPI} = require('../lib/tools.js');
 const {getBenderApi} = require('../lib/bender-api.js');
 
 const readline = require('readline');
@@ -25,8 +25,18 @@ async function main() {
   const [tag] = program.args;
   const version = tag.replace(/^v/, '');
 
-  const tmp = workingPackage.repository.split('/');
+  const cdnUrl = `https://cdn.vaadin.com/${elementName}/${version}/`;
+  const cdnApi = createAPI({baseURL: cdnUrl});
 
+  try {
+    // Do not deploy if version is already in cdn
+    await cdnApi.get();
+    console.log(`${elementName} ${version} was already deployed in CDN`);
+    return;
+  } catch (ignore) {
+  }
+
+  const tmp = workingPackage.repository.split('/');
   const response = await api.post(`/buildQueue`, {
     buildType: {id: 'CoreElements_DeployTest_Mdeploy'},
     properties: {
