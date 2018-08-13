@@ -13,13 +13,17 @@ function done(msg) {
   console.log(' [magi] 🎉  \x1b[33m%s\x1b[0m \n', msg.replace(/(https?:[^\s]+)/, '\x1b[32m $1\x1b[0m'));
 }
 
+function error(msg) {
+  console.log(' [magi] ⚠️  ⚠️  \x1b[31m%s\x1b[0m ⚠️  ⚠️ \n', msg);
+}
+
 program
   .arguments('<version>')
   .option('--draft', 'Create the release in draft mode')
   .parse(process.argv);
 
 if (program.args.length < 1) {
-  console.error('not enough arguments, expected <version>');
+  error('not enough arguments, expected <version>');
   process.exit(1);
 }
 
@@ -35,7 +39,7 @@ async function main(version) {
 
   const newVersion = version.replace(/^v/, '');
   if (previousVersion === newVersion) {
-    console.error(`The new version cannot be the same to the previous version ${previousVersion}`);
+    error(`The new version cannot be the same to the previous version ${previousVersion}`);
     process.exit(1);
   }
 
@@ -59,7 +63,7 @@ async function main(version) {
 
   const releaseOptions = {
     "tag_name": `v${newVersion}`,
-    'target_commitish': branch,
+    "target_commitish": branch,
     "name": `v${newVersion}`,
     "body": releaseNotes,
     "draft": draft,
@@ -108,6 +112,6 @@ async function main(version) {
 main(...program.args)
   .then(() => process.exit(0))
   .catch((e) => {
-    console.error(e);
+    error(e);
     process.exit(1);
   });
