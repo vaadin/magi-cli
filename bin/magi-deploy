@@ -48,7 +48,7 @@ async function main() {
     readline.clearLine(process.stdout, 0);
     readline.cursorTo(process.stdout, 0);
     const dots = [...Array(n%3+2)].join('.');
-    process.stdout.write(`[${response.data.state}] ${response.data.statusText}${dots}`);
+    process.stdout.write(`[${response.data.state}] ${response.data.statusText ? response.data.statusText : 'delayed'}${dots}`);
     if (response.data.state === 'finished') {
       if (response.data.status === 'SUCCESS') {
         break;

@@ -1,0 +1,117 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander');
+const readline = require('readline');
+const fs = require('fs');
+
+function info(msg) {
+  console.log(' [magi] 🌀  \x1b[36m%s\x1b[0m ...', msg);
+}
+
+function done(msg) {
+  console.log(' [magi] 🎉  \x1b[33m%s\x1b[0m \n', msg.replace(/(https?:[^\s]+)/, '\x1b[32m $1\x1b[0m'));
+}
+
+function error(msg) {
+  console.log(' [magi] ⚠️  ⚠️  \x1b[31m%s\x1b[0m ⚠️  ⚠️ \n', msg);
+}
+
+program
+  .arguments('<version>')
+  .option('--draft', 'Create the release in draft mode')
+  .parse(process.argv);
+
+if (program.args.length < 1) {
+  error('not enough arguments, expected <version>');
+  process.exit(1);
+}
+
+const {exe, ask, workingPackage, elementName} = require('../lib/tools.js');
+const {getGitHubApi} = require('../lib/github-api.js');
+
+async function main(version) {
+
+  /* Read current version */
+  const jsonfile = require('jsonfile');
+  const packageJson = jsonfile.readFileSync('package.json');
+  const previousVersion = packageJson.version;
+
+  const newVersion = version.replace(/^v/, '');
+  if (previousVersion === newVersion) {
+    error(`The new version cannot be the same to the previous version ${previousVersion}`);
+    process.exit(1);
+  }
+
+  info(`Creating ${newVersion} tag and commit`);
+  await exe(`npm version ${newVersion}`, true);
+
+  const gh = await getGitHubApi(program.auth);
+
+  let branch = await exe('git symbolic-ref --short HEAD', true);
+  branch = branch.replace(/\n/, '');
+
+  info(`Push tag and commit to branch ${branch} in github`);
+  await exe(`git push origin ${branch}`, true);
+  await exe(`git push origin ${branch} --tags`, true);
+  done(`Tagged in GH at: https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`);
+
+  info('Generating Release Notes');
+  const releaseNotes = await exe(`magi release-notes v${previousVersion} v${newVersion}`, true);
+
+  const draft = !!program.draft;
+
+  const releaseOptions = {
+    "tag_name": `v${newVersion}`,
+    "target_commitish": branch,
+    "name": `v${newVersion}`,
+    "body": releaseNotes,
+    "draft": draft,
+    "prerelease": false
+  }
+
+  var [user, repo] = workingPackage.repository.split('/');
+  const repository = gh.getRepo(user, repo);
+
+  info('Creating and pushing the release');
+  let releaseUrl;
+  await repository.createRelease(releaseOptions, (ignore, data) => {
+    releaseUrl = data.html_url.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
+  });
+
+  if (draft) {
+    done(`Release created in draft mode, modify notes at: ${releaseUrl}`);
+    await ask('Press Enter once you are done with the release notes...');
+  } else {
+    done(`Release created at: ${releaseUrl}`);
+  }
+
+  info('Converting to polymer 3');
+  await exe('magi p3-convert --out . --import-style=name');
+  done('Converted to Polymer 3')
+
+  info('Publishing to npm', true);
+  await exe('npm publish --access public');
+  done(`Deployed in NPM at: https://www.npmjs.com/package/${workingPackage.name}`);
+
+  info('Reverting P3 back to P2');
+  await exe('git reset --hard HEAD^', true);
+  await exe('git clean -fd', true);
+
+  info('Deploying to demo server');
+  await exe(`magi deploy v${newVersion}`);
+  done(`Deployed in CDN at: https://cdn.vaadin.com/${elementName}/${newVersion}/demo/`);
+
+  info('Deploying to webjar');
+  await exe(`magi webjar v${newVersion}`);
+  done(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
+
+  done(`!!! 😃 ELEMENT: ${elementName} VERSION: ${newVersion} Successfully Released and Deployed 😃 !!!`);
+}
+
+main(...program.args)
+  .then(() => process.exit(0))
+  .catch((e) => {
+    error(e);
+    process.exit(1);
+  });
