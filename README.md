@@ -11,9 +11,26 @@ Elements team command-line member
 
 ## Usage
 
-    $ cd some-element-repo
-    $ magi release-notes <fromVersion> <toVersion>
-    $ magi add-milestone <fromVersion> <toVersion>
+```sh
+  Usage: magi [options] [command]
+
+  Options:
+
+    -V, --version                            output the version number
+    -h, --help                               output usage information
+
+  Commands:
+
+    release-notes <fromVersion> <toVersion>  Draft release notes for the specified version range
+    add-milestone <fromVersion> <toVersion>  Add milestone for <toVersion> to all issues and PRs closed during the specified version range
+    deploy <version>                         Build and deploy version <version> to CDN origin
+    webjar <version>                         Deploy version <version> on https://www.webjars.org
+    directory                                Update https://vaadin.com/directory
+    release <version> [--draft]              Release new <version> of the component and publish to npm
+    p3-convert [modulizerArgs...]            Prepares package.json and runs modulizer with pre-configured arguments
+    help [cmd]                               display help for [cmd]
+```
+
 
 ## Development
 
