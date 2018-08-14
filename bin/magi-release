@@ -132,7 +132,7 @@ async function main(version) {
   /* CDN */
   info('Deploying to demo server');
   await exe(`magi deploy v${newVersion}`);
-  done(`Deployed in CDN at: https://cdn.vaadin.com/${elementName}/${newVersion}/demo/`);
+  done(`Deployed in CDN at: https://cdn-origin.vaadin.com/${elementName}/${newVersion}/demo/`);
 
   /* WebJar */
   info('Deploying to webjar');

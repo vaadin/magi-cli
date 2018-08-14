@@ -25,13 +25,13 @@ async function main() {
   const [tag] = program.args;
   const version = tag.replace(/^v/, '');
 
-  const cdnUrl = `https://cdn.vaadin.com/${elementName}/${version}/`;
+  const cdnUrl = `https://cdn-origin.vaadin.com/${elementName}/${version}/`;
   const cdnApi = createAPI({baseURL: cdnUrl});
 
   try {
     // Do not deploy if version is already in cdn
     await cdnApi.get();
-    console.log(`${elementName} ${version} was already deployed in CDN`);
+    console.log(` [deploy]   ${elementName} ${version} was already deployed in CDN`);
     return;
   } catch (ignore) {
   }
@@ -50,7 +50,7 @@ async function main() {
   });
 
   const id = response.data.id;
-  console.log('Build link: ', response.data.webUrl);
+  console.log(' [deploy]   Build link: ', response.data.webUrl);
 
   let n = 0;
   do {
@@ -63,7 +63,7 @@ async function main() {
       if (response.data.status === 'SUCCESS') {
         break;
       } else {
-        throw new Error('\n Error deploying element ! \n' + response.data.statusText)
+        throw new Error(' [deploy]   Error deploying element ! \n' + response.data.statusText)
       }
     }
     await timeout(1000);
