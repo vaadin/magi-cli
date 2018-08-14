@@ -39,13 +39,13 @@ async function main(version) {
 
   /* open repository connection in GH */
   const gh = await getGitHubApi(program.auth);
-  var [user, repo] = workingPackage.repository.split('/');
+  const [user, repo] = workingPackage.repository.split('/');
   const repository = gh.getRepo(user, repo);
 
   /* We use current branch not necessarily `master` */
-  let branch = (await exe('git symbolic-ref --short HEAD', true).replace(/\n/, '');
+  let branch = (await exe('git symbolic-ref --short HEAD', true)).replace(/\n/, '');
 
-  /* Check if newVersion is already tagged */
+  /* Check if newVersion is already tagged and pushed to GH */
   const newVersion = version.replace(/^v/, '');
   let pushVersion = true;
   if (previousVersion === newVersion) {
@@ -57,8 +57,6 @@ async function main(version) {
     info(`Creating ${newVersion} tag and commit`);
     await exe(`npm version ${newVersion}`, true);
   }
-
-  /* Check if tag is already pushed to GH */
   const tagUrl = `https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`;
   if (pushVersion) {
 
@@ -74,7 +72,7 @@ async function main(version) {
   let releaseUrl;
   let draft = !!program.draft;
   await repository.listReleases().then(response => {
-    const release = response.data.filter(release => release.tag_name.replace(/^v/, '') == newVersion)[0];
+    const release = response.data.find(release => release.tag_name.replace(/^v/, '') == newVersion);
     release && (releaseUrl = release.html_url, draft = release.draft);
   });
 
@@ -103,7 +101,7 @@ async function main(version) {
   if (draft) {
     releaseUrl = releaseUrl.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
     done(`You can modify release notes at: ${releaseUrl}`);
-    await ask('Press Enter once you are done with the release notes...');
+    await ask('    Remember to click on `Publish Release`, otherwise webjar will fail.\n    Press Enter once you are done with the release notes...');
   }
 
   /* Check whether this version is already publised in NPM */
@@ -133,8 +131,17 @@ async function main(version) {
 
   /* WebJar */
   info('Deploying to webjar');
-  await exe(`magi webjar v${newVersion}`);
-  done(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
+  draft = true;
+  await repository.listReleases().then(response => {
+    const release = response.data.find(release => release.tag_name.replace(/^v/, '') == newVersion);
+    release && (draft = release.draft);
+  });
+  if (draft) {
+    throw new Error('Cannot deploy webjar while there is no release in GH or it is in draft mode');
+  } else {
+    await exe(`magi webjar v${newVersion}`);
+    done(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
+  }
 
   done(`!!! 😃 ELEMENT: ${elementName} VERSION: ${newVersion} Successfully Released and Deployed 😃 !!!`);
 }
