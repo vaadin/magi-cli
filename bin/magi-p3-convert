@@ -111,12 +111,24 @@ async function main() {
   `);
 
   // Run custom project adjustments
-  const magiPost = jsonfile.readFileSync('magi-p3-post.json', {throws: false});
+  const postFile = 'magi-p3-post';
+  let magiPost = jsonfile.readFileSync(`${postFile}.json`, {throws: false});
+  let ext;
+  if (magiPost) {
+    ext = 'json';
+  } else {
+    try {
+      magiPost = require(path.join(process.cwd(), `${postFile}.js`));
+      ext = 'js';
+    } catch(e) {
+    }
+  }
+
   if (magiPost) {
     // magiPost json is a valid options object for 'replace-in-file'
     replace.sync(magiPost);
-    // we dont need magi-p3-post.json anymore
-    (magiPost.remove || []).concat('magi-p3-post.json').forEach(file => fs.unlinkSync(file));
+    // we don't need "magi-p3-post" anymore
+    (magiPost.remove || []).concat(`${postFile}.${ext}`).forEach(file => fs.unlinkSync(file));
   }
 }
 
