@@ -62,7 +62,7 @@ async function main(version) {
 
     info(`Push tag and commit to branch ${branch} in github`);
     await exe(`git push origin ${branch}`, true);
-    await exe(`git push origin ${branch} --tags`, true);
+    await exe(`git push origin ${branch} v${newVersion}`, true);
     done(`Tagged in GH at: ${tagUrl}`);
   } else {
     done(`Already Tagged in GH at: ${tagUrl}`);
