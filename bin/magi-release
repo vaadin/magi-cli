@@ -35,7 +35,6 @@ async function main(version) {
   /* Read current version */
   const jsonfile = require('jsonfile');
   const packageJson = jsonfile.readFileSync('package.json');
-  const previousVersion = packageJson.version;
 
   /* open repository connection in GH */
   const gh = await getGitHubApi(program.auth);
@@ -46,23 +45,24 @@ async function main(version) {
   let branch = (await exe('git symbolic-ref --short HEAD', true)).replace(/\n/, '');
 
   /* Check if newVersion is already tagged and pushed to GH */
+  const previousVersion = packageJson.version;
   const newVersion = version.replace(/^v/, '');
-  let pushVersion = true;
+  let pushToGH = true;
   if (previousVersion === newVersion) {
     done(`Already committed version v${newVersion}`);
     await repository.listTags().then(response => {
-      pushVersion = response.data.filter(tag => tag.name.replace(/^v/, '') == newVersion).length === 0;
+      // Decide whether push to github if there is no tag with this version number
+      pushToGH = response.data.filter(tag => tag.name.replace(/^v/, '') == newVersion).length === 0;
     });
   } else {
     info(`Creating ${newVersion} tag and commit`);
     await exe(`npm version ${newVersion}`, true);
   }
-  const tagUrl = `https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`;
-  if (pushVersion) {
 
+  const tagUrl = `https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`;
+  if (pushToGH) {
     info(`Push tag and commit to branch ${branch} in github`);
-    await exe(`git push origin ${branch}`, true);
-    await exe(`git push origin ${branch} v${newVersion}`, true);
+    await exe(`git push origin HEAD v${newVersion}`, true);
     done(`Tagged in GH at: ${tagUrl}`);
   } else {
     done(`Already Tagged in GH at: ${tagUrl}`);
@@ -70,9 +70,14 @@ async function main(version) {
 
   /* Check if version has already released in GH */
   let releaseUrl;
+  let lastRelease = previousVersion;
   let draft = !!program.draft;
   await repository.listReleases().then(response => {
-    const release = response.data.find(release => release.tag_name.replace(/^v/, '') == newVersion);
+    const releases = response.data;
+    // figure out the last release (first in the list that is not draft)
+    lastRelease = releases.find(release => !release.draft).name.replace(/^v/, '');
+    // Check if new version has already a release
+    const release = releases.find(release => release.tag_name.replace(/^v/, '') == newVersion);
     release && (releaseUrl = release.html_url, draft = release.draft);
   });
 
@@ -80,7 +85,7 @@ async function main(version) {
     done(`Release Already Created at: ${releaseUrl}`);
   } else {
     info('Generating Release Notes');
-    const releaseNotes = await exe(`magi release-notes v${previousVersion} v${newVersion}`, true);
+    const releaseNotes = await exe(`magi release-notes v${lastRelease} v${newVersion}`, true);
 
     const releaseOptions = {
       "tag_name": `v${newVersion}`,
