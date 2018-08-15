@@ -117,7 +117,7 @@ async function main(version) {
     done(`Release Already deployed in NPM: ${npmUrl}`);
   } else {
     info('Converting to polymer 3');
-    await exe('magi p3-convert --out . --import-style=name');
+    await exe('magi p3-convert --out . --import-style=name', true);
     done('Converted to Polymer 3')
 
     info('Publishing to npm', true);
