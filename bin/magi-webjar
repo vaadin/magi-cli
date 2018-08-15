@@ -24,7 +24,7 @@ async function main() {
   try {
     // Do not deploy if version is already in maven repo
     await mavenApi.get();
-    console.log(`${elementName} ${version} was already deployed`);
+    console.log(` [webjar]   ${elementName} ${version} was already deployed in Maven`);
     return;
   } catch (ignore) {
   }
@@ -49,16 +49,13 @@ async function main() {
       await mavenApi.get();
       resolve();
     } catch (e) {
-      reject(`Error deploying element at: ${mavenUrl}\nCheck that ${elementName} ${version} has been tagged in github.`);
+      reject(` [webjar]   Error deploying element at: ${mavenUrl}\nCheck that ${elementName} ${version} has been tagged in github.`);
     }
   }));
 }
 
 main(...program.args)
-  .then(() => {
-    console.log(`WebJar Sucessfully Deployed at: ${mavenUrl}`);
-    process.exit(0);
-  })
+  .then(() => process.exit(0))
   .catch((e) => {
     console.error(e);
     process.exit(1);
