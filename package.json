@@ -15,6 +15,7 @@
     "axios": "^0.17.1",
     "commander": "^2.17.1",
     "configstore": "^3.1.2",
+    "cross-spawn": "^6.0.5",
     "github-api": "^3.0.0",
     "jsonfile": "^4.0.0",
     "replace-in-file": "^3.4.2"

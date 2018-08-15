@@ -42,7 +42,7 @@ async function main(version) {
   const repository = gh.getRepo(user, repo);
 
   /* We use current branch not necessarily `master` */
-  let branch = (await exe('git symbolic-ref --short HEAD', true)).replace(/\n/, '');
+  let branch = (await exe('git symbolic-ref --short HEAD', true)).trim();
 
   /* Check if newVersion is already tagged and pushed to GH */
   const previousVersion = packageJson.version;
