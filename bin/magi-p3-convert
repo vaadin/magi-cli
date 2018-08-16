@@ -72,7 +72,8 @@ async function main() {
     // TODO(web-padawan): revert commit once the next 2.x release after 2.6.0 lands
     const pinPolymer = '5f5d2c2';
     bowerJson.dependencies.polymer = `Polymer/polymer#${pinPolymer}`;
-    bowerJson.resolutions = {polymer: `${pinPolymer}`};
+    const resolutions = bowerJson.resolutions || {};
+    bowerJson.resolutions = {...resolutions, polymer: `${pinPolymer}`};
   }
 
   jsonfile.writeFileSync('bower.json', bowerJson, {spaces: 2});
