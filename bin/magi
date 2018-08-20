@@ -28,7 +28,7 @@ program
     'Update https://vaadin.com/directory'
   )
   .command(
-    'release <version> [--draft]',
+    'release <version> [--draft] [--skip-npm] [--skip-cdn] [--skip-webjar]',
     'Release a new <version> of the component (tag, npm, cdn, webjar, etc), or continue the release process if it failed previously'
   )
   .command(
