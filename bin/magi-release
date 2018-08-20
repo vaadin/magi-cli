@@ -20,6 +20,7 @@ function error(msg) {
 program
   .arguments('<version>')
   .option('--draft', 'Create the release in draft mode')
+  .option('--skip-cdn', 'Skip demo server deployment, should be used for internal dependencies')
   .parse(process.argv);
 
 if (program.args.length < 1) {
@@ -130,9 +131,14 @@ async function main(version) {
   }
 
   /* CDN */
-  info('Deploying to demo server');
-  await exe(`magi deploy v${newVersion}`);
-  done(`Deployed in CDN at: https://cdn-origin.vaadin.com/${elementName}/${newVersion}/demo/`);
+  const skipCdn = !!program.skipCdn;
+  if (skipCdn) {
+    info('Demo server deployment skipped.');
+  } else {
+    info('Deploying to demo server');
+    await exe(`magi deploy v${newVersion}`);
+    done(`Deployed in CDN at: https://cdn-origin.vaadin.com/${elementName}/${newVersion}/demo/`);
+  }
 
   /* WebJar */
   info('Deploying to webjar');
