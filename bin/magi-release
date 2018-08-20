@@ -78,7 +78,7 @@ async function main(version) {
     const latestRelease = releases.find(release => !release.draft);
     if (latestRelease) {
       // figure out the last release (first in the list that is not draft)
-      lastReleaseVersion = latestRelease.name.replace(/^v/, '');
+      lastReleaseVersion = latestRelease.tag_name.replace(/^v/, '');
       // Check if new version has already a release
       const release = releases.find(release => release.tag_name.replace(/^v/, '') == newVersion);
       release && (releaseUrl = release.html_url, draft = release.draft);
