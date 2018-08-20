@@ -70,22 +70,25 @@ async function main(version) {
 
   /* Check if version has already released in GH */
   let releaseUrl;
-  let lastRelease = previousVersion;
+  let lastReleaseVersion = previousVersion;
   let draft = !!program.draft;
   await repository.listReleases().then(response => {
     const releases = response.data;
-    // figure out the last release (first in the list that is not draft)
-    lastRelease = releases.find(release => !release.draft).name.replace(/^v/, '');
-    // Check if new version has already a release
-    const release = releases.find(release => release.tag_name.replace(/^v/, '') == newVersion);
-    release && (releaseUrl = release.html_url, draft = release.draft);
+    const latestRelease = releases.find(release => !release.draft);
+    if (latestRelease) {
+      // figure out the last release (first in the list that is not draft)
+      lastReleaseVersion = latestRelease.name.replace(/^v/, '');
+      // Check if new version has already a release
+      const release = releases.find(release => release.tag_name.replace(/^v/, '') == newVersion);
+      release && (releaseUrl = release.html_url, draft = release.draft);
+    }
   });
 
   if (releaseUrl) {
     done(`Release Already Created at: ${releaseUrl}`);
   } else {
     info('Generating Release Notes');
-    const releaseNotes = await exe(`magi release-notes v${lastRelease} v${newVersion}`, true);
+    const releaseNotes = await exe(`magi release-notes v${lastReleaseVersion} v${newVersion}`, true);
 
     const releaseOptions = {
       "tag_name": `v${newVersion}`,
