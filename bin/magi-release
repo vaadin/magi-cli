@@ -20,7 +20,9 @@ function error(msg) {
 program
   .arguments('<version>')
   .option('--draft', 'Create the release in draft mode')
-  .option('--skip-cdn', 'Skip demo server deployment, should be used for internal dependencies')
+  .option('--skip-npm', 'Skip p3 conversion and npm deployment')
+  .option('--skip-cdn', 'Skip demo server deployment')
+  .option('--skip-webjar', 'Skip webjar deployment')
   .parse(process.argv);
 
 if (program.args.length < 1) {
@@ -114,34 +116,37 @@ async function main(version) {
   }
 
   /* Check whether this version is already publised in NPM */
-  let npmInfo;
-  try {
-    npmInfo = await exe(`npm info ${workingPackage.name}@${newVersion}`, true);
-  } catch (ignore) {
-  }
-  let npmUrl = `https://www.npmjs.com/package/${workingPackage.name}`;
-
-  if (npmInfo) {
-    done(`Release Already deployed in NPM: ${npmUrl}`);
+  if (program.skipNpm) {
+    info('Skipping NPM Release');
   } else {
-    info('Converting to polymer 3');
-    await exe('npx rimraf node_modules');
-    await exe('magi p3-convert --out . --import-style=name');
-    done('Converted to Polymer 3')
+    let npmInfo;
+    try {
+      npmInfo = await exe(`npm info ${workingPackage.name}@${newVersion}`, true);
+    } catch (ignore) {
+    }
+    let npmUrl = `https://www.npmjs.com/package/${workingPackage.name}`;
 
-    info('Publishing to npm', true);
-    await exe('npm publish --access public');
-    done(`Deployed in NPM at: ${npmUrl}`);
+    if (npmInfo) {
+      done(`Release Already deployed in NPM: ${npmUrl}`);
+    } else {
+      info('Converting to polymer 3');
+      await exe('npx rimraf node_modules');
+      await exe('magi p3-convert --out . --import-style=name');
+      done('Converted to Polymer 3')
 
-    info('Reverting P3 back to P2');
-    await exe('git reset --hard HEAD^', true);
-    await exe('git clean -fd', true);
+      info('Publishing to npm', true);
+      await exe('npm publish --access public');
+      done(`Deployed in NPM at: ${npmUrl}`);
+
+      info('Reverting P3 back to P2');
+      await exe('git reset --hard HEAD^', true);
+      await exe('git clean -fd', true);
+    }
   }
 
   /* CDN */
-  const skipCdn = !fs.existsSync('index.html') || !!program.skipCdn;
-  if (skipCdn) {
-    info('Demo server deployment skipped.');
+  if (!fs.existsSync('index.html') || program.skipCdn) {
+    info('Skipping CDN Deployment');
   } else {
     info('Deploying to demo server');
     await exe(`magi deploy v${newVersion}`);
@@ -149,17 +154,21 @@ async function main(version) {
   }
 
   /* WebJar */
-  info('Deploying to webjar');
-  draft = true;
-  await repository.listReleases().then(response => {
-    const release = response.data.find(release => release.tag_name.replace(/^v/, '') == newVersion);
-    release && (draft = release.draft);
-  });
-  if (draft) {
-    throw new Error('Cannot deploy webjar while there is no release in GH or it is in draft mode');
+  if (program.skipWebjar) {
+    info('Skipping Webjar Deployment');
   } else {
-    await exe(`magi webjar v${newVersion}`);
-    done(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
+    info('Deploying to webjar');
+    draft = true;
+    await repository.listReleases().then(response => {
+      const release = response.data.find(release => release.tag_name.replace(/^v/, '') == newVersion);
+      release && (draft = release.draft);
+    });
+    if (draft) {
+      throw new Error('Cannot deploy webjar while there is no release in GH or it is in draft mode');
+    } else {
+      await exe(`magi webjar v${newVersion}`);
+      done(`Deployed in MAVEN at: https://dl.bintray.com/webjars/maven/org/webjars/bowergithub/${workingPackage.repository}/${newVersion}`);
+    }
   }
 
   done(`!!! 😃 ELEMENT: ${elementName} VERSION: ${newVersion} Successfully Released and Deployed 😃 !!!`);
