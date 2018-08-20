@@ -139,7 +139,7 @@ async function main(version) {
   }
 
   /* CDN */
-  const skipCdn = !!program.skipCdn;
+  const skipCdn = !fs.existsSync('index.html') || !!program.skipCdn;
   if (skipCdn) {
     info('Demo server deployment skipped.');
   } else {
