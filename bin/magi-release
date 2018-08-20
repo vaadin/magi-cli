@@ -125,6 +125,7 @@ async function main(version) {
     done(`Release Already deployed in NPM: ${npmUrl}`);
   } else {
     info('Converting to polymer 3');
+    await exe('npx rimraf node_modules');
     await exe('magi p3-convert --out . --import-style=name');
     done('Converted to Polymer 3')
 
