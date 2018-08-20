@@ -110,7 +110,11 @@ async function main(version) {
   }
 
   /* Check whether this version is already publised in NPM */
-  const npmInfo = await exe(`npm info ${workingPackage.name}@${newVersion}`, true);
+  let npmInfo;
+  try {
+    npmInfo = await exe(`npm info ${workingPackage.name}@${newVersion}`, true);
+  } catch (ignore) {
+  }
   let npmUrl = `https://www.npmjs.com/package/${workingPackage.name}`;
 
   if (npmInfo) {
