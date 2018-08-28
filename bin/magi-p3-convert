@@ -3,6 +3,7 @@
 
 const {workingPackage} = require('../lib/tools.js');
 const {EOL} = require('os');
+const {files, from, to} = require('../lib/p3-post.js')
 const path = require('path');
 const fs = require('fs');
 const jsonfile = require('jsonfile');
@@ -102,6 +103,9 @@ async function main() {
       ${process.argv.slice(2).join(' ')} \
   `);
 
+  // Set default values for replacements
+  const postProcess = {files, from, to};
+
   // Run custom project adjustments
   let postFile = 'magi-p3-post.json';
   let magiPost = jsonfile.readFileSync(postFile, {throws: false});
@@ -114,11 +118,22 @@ async function main() {
   }
 
   if (magiPost) {
-    // magiPost json is a valid options object for 'replace-in-file'
-    replace.sync(magiPost);
-    // we don't need "magi-p3-post" anymore
-    (magiPost.remove || []).concat(postFile).forEach(file => fs.unlinkSync(file));
+    magiPost.files = [...postProcess.files, ...magiPost.files];
+    magiPost.from = [...postProcess.from, ...magiPost.from];
+    magiPost.to = [...postProcess.to, ...magiPost.to];
+  } else {
+    magiPost = postProcess;
   }
+
+  // magiPost json is a valid options object for 'replace-in-file'
+  replace.sync(magiPost);
+
+  const filesToRemove = magiPost.remove || [];
+  // we don't need "magi-p3-post" anymore
+  if (fs.existsSync(postFile)) {
+    filesToRemove.push(postFile);
+  }
+  filesToRemove.forEach(file => fs.unlinkSync(file));
 }
 
 main()
