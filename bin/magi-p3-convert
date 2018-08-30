@@ -10,6 +10,7 @@ const replace = require('replace-in-file');
 const child_process = require('child_process');
 
 function runSync(cmd) {
+  cmd = cmd.trim();
   const result = child_process.spawnSync(cmd, {
     shell: true,
     stdio: 'inherit'
