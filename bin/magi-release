@@ -134,9 +134,15 @@ async function main(version) {
       await exe('magi p3-convert --out . --import-style=name');
       done('Converted to Polymer 3')
 
-      info('Publishing to npm', true);
+      info('Publishing to NPM');
       await exe('npm publish --access public');
       done(`Deployed in NPM at: ${npmUrl}`);
+
+      info('Updating tag in NPM');
+      const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
+      const tag = next.test(newVersion) ? 'next' : 'latest';
+      await exe(`npm dist-tag add ${workingPackage.name}@${newVersion} ${tag}`);
+      done(`Updated tag in NPM to ${tag}`);
 
       info('Reverting P3 back to P2');
       await exe('git reset --hard HEAD^', true);
