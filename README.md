@@ -1,6 +1,9 @@
 # magi-cli
 Elements team command-line member
 
+[![npm version](https://badgen.net/npm/v/magi-cli)](https://www.npmjs.com/package/magi-cli)
+[![semantic-release badge](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/vaadin/magi-cli/blob/master/CHANGELOG.md)
+
 ## Requirements
 - Node.js
 - Git
