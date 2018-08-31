@@ -115,9 +115,9 @@ async function main(version) {
     await ask('    Remember to click on `Publish Release`, otherwise webjar will fail.\n    Press Enter once you are done with the release notes...');
   }
 
-  /* Check whether this version is already publised in NPM */
+  /* Check whether this version is already published in npm */
   if (program.skipNpm) {
-    info('Skipping NPM Release');
+    info('Skipping npm Release');
   } else {
     let npmInfo;
     try {
@@ -127,22 +127,22 @@ async function main(version) {
     let npmUrl = `https://www.npmjs.com/package/${workingPackage.name}`;
 
     if (npmInfo) {
-      done(`Release Already deployed in NPM: ${npmUrl}`);
+      done(`Release Already deployed in npm: ${npmUrl}`);
     } else {
       info('Converting to polymer 3');
       await exe('npx rimraf node_modules');
       await exe('magi p3-convert --out . --import-style=name');
       done('Converted to Polymer 3')
 
-      info('Publishing to NPM');
+      info('Publishing to npm');
       await exe('npm publish --access public');
-      done(`Deployed in NPM at: ${npmUrl}`);
+      done(`Deployed in npm at: ${npmUrl}`);
 
-      info('Updating tag in NPM');
+      info('Updating tag in npm');
       const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
       const tag = next.test(newVersion) ? 'next' : 'latest';
       await exe(`npm dist-tag add ${workingPackage.name}@${newVersion} ${tag}`);
-      done(`Updated tag in NPM to ${tag}`);
+      done(`Updated tag in npm to ${tag}`);
 
       info('Reverting P3 back to P2');
       await exe('git reset --hard HEAD^', true);
