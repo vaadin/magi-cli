@@ -1,6 +1,12 @@
 language: node_js
 node_js: 8.11
 
+# limit the Travis 'build on push' feature to the master branch only
+# since there are no test, and the build is used for semantic-release
+branches:
+  only:
+   - master
+
 after_success:
   - npm run release
 
