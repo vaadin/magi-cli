@@ -19,7 +19,8 @@
     "cross-spawn": "^6.0.5",
     "github-api": "^3.0.0",
     "jsonfile": "^4.0.0",
-    "replace-in-file": "^3.4.2"
+    "replace-in-file": "^3.4.2",
+    "update-notifier": "^2.5.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.0",
