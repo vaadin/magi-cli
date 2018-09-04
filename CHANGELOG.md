@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/vaadin/magi-cli/compare/v0.12.0...v0.13.0) (2018-09-04)
+
+
+### Features
+
+* **update-notifier:** remind about new magi releases ([#63](https://github.com/vaadin/magi-cli/issues/63)) ([eef9030](https://github.com/vaadin/magi-cli/commit/eef9030))
+
 # [0.12.0](https://github.com/vaadin/magi-cli/compare/v0.11.0...v0.12.0) (2018-08-31)
 
 
