@@ -1,3 +1,10 @@
+# [0.14.0](https://github.com/vaadin/magi-cli/compare/v0.13.0...v0.14.0) (2018-09-05)
+
+
+### Features
+
+* **github-api:** support env.GH_TOKEN, remove username ([#64](https://github.com/vaadin/magi-cli/issues/64)) ([e5b9136](https://github.com/vaadin/magi-cli/commit/e5b9136))
+
 # [0.13.0](https://github.com/vaadin/magi-cli/compare/v0.12.0...v0.13.0) (2018-09-04)
 
 
