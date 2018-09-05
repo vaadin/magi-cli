@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+const isCi = require('is-ci');
 const program = require('commander');
-const readline = require('readline');
 const fs = require('fs');
 
 function info(msg) {
@@ -60,6 +60,10 @@ async function main(version) {
   } else {
     info(`Creating ${newVersion} tag and commit`);
     await exe(`npm version ${newVersion}`, true);
+  }
+
+  if (isCi) {
+    await setupGitForCI(workingPackage.repository)
   }
 
   const tagUrl = `https://github.com/${workingPackage.repository}/blob/v${newVersion}/package.json`;
