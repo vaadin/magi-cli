@@ -26,6 +26,7 @@
     "@semantic-release/changelog": "^3.0.0",
     "@semantic-release/git": "^7.0.3",
     "@semantic-release/npm": "^5.0.4",
+    "is-ci": "^1.2.0",
     "semantic-release": "^15.9.12"
   }
 }
