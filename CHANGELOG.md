@@ -1,3 +1,10 @@
+## [0.14.1](https://github.com/vaadin/magi-cli/compare/v0.14.0...v0.14.1) (2018-09-07)
+
+
+### Bug Fixes
+
+* **README:** Elements -> Components ([#66](https://github.com/vaadin/magi-cli/issues/66)) ([6ccf83b](https://github.com/vaadin/magi-cli/commit/6ccf83b))
+
 # [0.14.0](https://github.com/vaadin/magi-cli/compare/v0.13.0...v0.14.0) (2018-09-05)
 
 
