@@ -1,3 +1,10 @@
+# [0.15.0](https://github.com/vaadin/magi-cli/compare/v0.14.2...v0.15.0) (2018-10-16)
+
+
+### Features
+
+* **p3-convert:** pin Highcharts to 6.1.4 ([#70](https://github.com/vaadin/magi-cli/issues/70)) ([cb31e01](https://github.com/vaadin/magi-cli/commit/cb31e01))
+
 ## [0.14.2](https://github.com/vaadin/magi-cli/compare/v0.14.1...v0.14.2) (2018-10-16)
 
 
