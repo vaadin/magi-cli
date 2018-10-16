@@ -1,3 +1,10 @@
+## [0.14.2](https://github.com/vaadin/magi-cli/compare/v0.14.1...v0.14.2) (2018-10-16)
+
+
+### Bug Fixes
+
+* **release:** add --tag to npm publish command, remove npm dist-tag ([#69](https://github.com/vaadin/magi-cli/issues/69)) ([9c4450c](https://github.com/vaadin/magi-cli/commit/9c4450c))
+
 ## [0.14.1](https://github.com/vaadin/magi-cli/compare/v0.14.0...v0.14.1) (2018-09-07)
 
 
