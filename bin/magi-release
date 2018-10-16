@@ -135,14 +135,10 @@ async function main(version) {
       done('Converted to Polymer 3')
 
       info('Publishing to npm');
-      await exe('npm publish --access public');
-      done(`Deployed in npm at: ${npmUrl}`);
-
-      info('Updating tag in npm');
       const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
       const tag = next.test(newVersion) ? 'next' : 'latest';
-      await exe(`npm dist-tag add ${workingPackage.name}@${newVersion} ${tag}`);
-      done(`Updated tag in npm to ${tag}`);
+      await exe(`npm publish --access public --tag ${tag}`);
+      done(`Deployed to npm: ${npmUrl} with tag ${tag}`);
 
       info('Reverting P3 back to P2');
       await exe('git reset --hard HEAD^', true);
