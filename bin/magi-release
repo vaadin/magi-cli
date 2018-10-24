@@ -2,8 +2,8 @@
 'use strict';
 
 const program = require('commander');
-const readline = require('readline');
 const fs = require('fs');
+const rimraf = require('rimraf');
 
 function info(msg) {
   console.log(' [magi] 🌀  \x1b[36m%s\x1b[0m ...', msg);
@@ -130,7 +130,7 @@ async function main(version) {
       done(`Release Already deployed in npm: ${npmUrl}`);
     } else {
       info('Converting to polymer 3');
-      await exe('npx rimraf node_modules');
+      rimraf.sync('node_modules');
       await exe('magi p3-convert --out . --import-style=name');
       done('Converted to Polymer 3')
 

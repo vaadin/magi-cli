@@ -8,6 +8,7 @@ const fs = require('fs');
 const jsonfile = require('jsonfile');
 const replace = require('replace-in-file');
 const child_process = require('child_process');
+const rimraf = require('rimraf');
 
 function runSync(cmd) {
   cmd = cmd.trim();
@@ -80,7 +81,8 @@ async function main() {
   jsonfile.writeFileSync('bower.json', bowerJson, {spaces: 2});
 
   runSync('git add bower.json');
-  runSync('bower up');
+  rimraf.sync('bower_components');
+  runSync('bower install');
 
   // Try commit changes
   try {
