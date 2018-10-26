@@ -1,3 +1,10 @@
+## [0.15.1](https://github.com/vaadin/magi-cli/compare/v0.15.0...v0.15.1) (2018-10-26)
+
+
+### Bug Fixes
+
+* remove bower_components before converting to P3 ([#71](https://github.com/vaadin/magi-cli/issues/71)) ([7b08be0](https://github.com/vaadin/magi-cli/commit/7b08be0))
+
 # [0.15.0](https://github.com/vaadin/magi-cli/compare/v0.14.2...v0.15.0) (2018-10-16)
 
 
