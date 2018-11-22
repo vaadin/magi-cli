@@ -112,7 +112,11 @@ async function main(version) {
   if (draft) {
     releaseUrl = releaseUrl.replace(/(.*)\/tag\/(.*)/, '$1/edit/$2');
     done(`You can modify release notes at: ${releaseUrl}`);
-    await ask('    Remember to click on `Publish Release`, otherwise webjar will fail.\n    Press Enter once you are done with the release notes...');
+    if (program.skipWebjar) {
+      await ask('    Press Enter once you are done with the release notes...');
+    } else {
+      await ask('    Remember to click on `Publish Release`, otherwise webjar will fail.\n    Press Enter once you are done with the release notes...');
+    }
   }
 
   /* Check whether this version is already published in npm */
