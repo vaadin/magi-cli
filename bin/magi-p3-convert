@@ -115,6 +115,12 @@ async function main() {
       ${process.argv.slice(2).join(' ')} \
   `);
 
+  // check that conversion went well and the primary entry point is there
+  const packageJson = JSON.parse(fs.readFileSync('package.json'));
+  if (!fs.existsSync(packageJson.main)) {
+    throw `⚠️ Something went wrong during P3 convert, ${packageJson.main} wasn't found.`;
+  }
+
   // Set default values for replacements
   const postProcess = {files, from, to};
 
