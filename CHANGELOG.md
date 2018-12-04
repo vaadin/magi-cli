@@ -1,3 +1,10 @@
+## [0.16.1](https://github.com/vaadin/magi-cli/compare/v0.16.0...v0.16.1) (2018-12-04)
+
+
+### Bug Fixes
+
+* **p3-convert:** verify p3-convert ([#76](https://github.com/vaadin/magi-cli/issues/76)) ([2b703ab](https://github.com/vaadin/magi-cli/commit/2b703ab))
+
 # [0.16.0](https://github.com/vaadin/magi-cli/compare/v0.15.1...v0.16.0) (2018-11-06)
 
 
