@@ -11,6 +11,10 @@
     "npm": "highcharts",
     "semver": "6.1.4"
   },
+  "pdfjs-dist": {
+    "npm": "pdfjs-dist",
+    "semver": "2.0.489"
+  },
   "polymer": {
     "npm": "@polymer/polymer",
     "semver": "^3.0.0"
