@@ -1,3 +1,10 @@
+# [0.17.0](https://github.com/vaadin/magi-cli/compare/v0.16.1...v0.17.0) (2019-01-23)
+
+
+### Features
+
+* **p3-convert:** add pdfjs-dist to dependency map ([#78](https://github.com/vaadin/magi-cli/issues/78)) ([7f1eb09](https://github.com/vaadin/magi-cli/commit/7f1eb09))
+
 ## [0.16.1](https://github.com/vaadin/magi-cli/compare/v0.16.0...v0.16.1) (2018-12-04)
 
 
