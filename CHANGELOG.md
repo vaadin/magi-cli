@@ -1,3 +1,10 @@
+## [0.17.1](https://github.com/vaadin/magi-cli/compare/v0.17.0...v0.17.1) (2019-01-24)
+
+
+### Bug Fixes
+
+* **p3-convert:** update pdfjs-dist to 2.0.943 ([#79](https://github.com/vaadin/magi-cli/issues/79)) ([e12f0d7](https://github.com/vaadin/magi-cli/commit/e12f0d7))
+
 # [0.17.0](https://github.com/vaadin/magi-cli/compare/v0.16.1...v0.17.0) (2019-01-23)
 
 
