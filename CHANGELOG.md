@@ -1,3 +1,10 @@
+## [0.17.2](https://github.com/vaadin/magi-cli/compare/v0.17.1...v0.17.2) (2019-01-31)
+
+
+### Bug Fixes
+
+* do not warn about webjar when --skip-webjar ([#75](https://github.com/vaadin/magi-cli/issues/75)) ([9a9aaae](https://github.com/vaadin/magi-cli/commit/9a9aaae))
+
 ## [0.17.1](https://github.com/vaadin/magi-cli/compare/v0.17.0...v0.17.1) (2019-01-24)
 
 
