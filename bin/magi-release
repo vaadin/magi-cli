@@ -139,10 +139,16 @@ async function main(version) {
       done('Converted to Polymer 3')
 
       info('Publishing to npm');
-      const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
-      const tag = next.test(newVersion) ? 'next' : 'latest';
-      await exe(`npm publish --access public --tag ${tag}`);
-      done(`Deployed to npm: ${npmUrl} with tag ${tag}`);
+      if (branch === 'master') {
+        const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
+        const tag = next.test(newVersion) ? 'next' : 'latest';
+        await exe(`npm publish --access public --tag ${tag}`);
+        done(`Deployed to npm: ${npmUrl} with tag ${tag}`);
+      } else {
+        // Backported patch releases
+        await exe(`npm publish --access public`);
+        done(`Deployed to npm: ${npmUrl}`);
+      }
 
       info('Reverting P3 back to P2');
       await exe('git reset --hard HEAD^', true);
