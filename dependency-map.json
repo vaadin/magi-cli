@@ -12,8 +12,8 @@
     "semver": "6.1.4"
   },
   "pdfjs-dist": {
-    "npm": "pdfjs-dist",
-    "semver": "2.0.943"
+    "npm": "@bundled-es-modules/pdfjs-dist",
+    "semver": "2.0.943-viewer"
   },
   "polymer": {
     "npm": "@polymer/polymer",
