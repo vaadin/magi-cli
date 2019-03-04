@@ -1,3 +1,15 @@
+# [0.18.0](https://github.com/vaadin/magi-cli/compare/v0.17.2...v0.18.0) (2019-03-04)
+
+
+### Bug Fixes
+
+* only tag releases from master ([#82](https://github.com/vaadin/magi-cli/issues/82)) ([b25ed98](https://github.com/vaadin/magi-cli/commit/b25ed98))
+
+
+### Features
+
+* use bundled-es-modules version of pdfjs-dist ([#83](https://github.com/vaadin/magi-cli/issues/83)) ([7968f26](https://github.com/vaadin/magi-cli/commit/7968f26))
+
 ## [0.17.2](https://github.com/vaadin/magi-cli/compare/v0.17.1...v0.17.2) (2019-01-31)
 
 
