@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+'use strict';
+
+const path = require('path');
+const {workingPackage} = require('../lib/tools.js');
+const expectedVersion = workingPackage.version;
+const {find} = require('find-in-files');
+const src = path.resolve(process.cwd(), './src');
+
+async function main() {
+  const results = await find(/static get version.*\n.*/, src);
+
+  for (var result in results) {
+    const res = results[result];
+    const version = res.matches[0].replace(/.*\n.*return '(.*)'.*/, '$1');
+    if (expectedVersion !== version) {
+      throw new Error(`Incorrect version: ${version} at ${result}, expected: ${expectedVersion}`);
+    }
+  }
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
