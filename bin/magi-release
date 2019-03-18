@@ -42,6 +42,13 @@ async function main(version) {
     throw new Error('Version getter is out of sync with package.json. Cannot release');
   }
 
+  /* Check if Bower dependencies have correct ranges */
+  try {
+    await exe('magi check-bower');
+  } catch (e) {
+    throw new Error('Incorrect dependency version range found. Cannot release');
+  }
+
   /* Read current version */
   const jsonfile = require('jsonfile');
   const packageJson = jsonfile.readFileSync('package.json');
