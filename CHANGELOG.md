@@ -1,3 +1,10 @@
+# [0.19.0](https://github.com/vaadin/magi-cli/compare/v0.18.0...v0.19.0) (2019-03-18)
+
+
+### Features
+
+* add version-check command for components getters ([#85](https://github.com/vaadin/magi-cli/issues/85)) ([61199e1](https://github.com/vaadin/magi-cli/commit/61199e1))
+
 # [0.18.0](https://github.com/vaadin/magi-cli/compare/v0.17.2...v0.18.0) (2019-03-04)
 
 
