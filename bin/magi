@@ -47,4 +47,8 @@ program
     'check-version',
     'Checks that version getters in the components are in sync with package.json'
   )
+  .command(
+    'update-version',
+    'Update version getters in the components. Should be run from npm preversion'
+  )
   .parse(process.argv);

@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+'use strict';
+
+// Should be run from 'preversion'
+// Assumes that the old version is in package.json and the new version is in npm_package_version environment variable.
+const replace = require('replace-in-file');
+const {exe, workingPackage} = require('../lib/tools.js');
+
+const oldVersion = workingPackage.version;
+if (!oldVersion) {
+  console.log('No old version found in package.json');
+  process.exit(1);
+}
+
+const version = process.env.npm_package_version;
+if (!version) {
+  console.log('New version must be given as a npm_package_version environment variable.');
+  process.exit(1);
+}
+
+async function main() {
+  const newVersion = version.replace(/^v/, '');
+  const changes = await replace({files: ['src/*.html'], from: oldVersion, to: newVersion});
+  // Stage the changes for the new version tag commit
+  if (changes.length) {
+    await exe(`git update-index -- ${changes.join(' ')}`);
+  }
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    error(e);
+    process.exit(1);
+  });
