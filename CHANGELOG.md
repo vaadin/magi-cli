@@ -1,3 +1,10 @@
+# [0.20.0](https://github.com/vaadin/magi-cli/compare/v0.19.0...v0.20.0) (2019-03-18)
+
+
+### Features
+
+* add check-bower command to check version ranges ([#84](https://github.com/vaadin/magi-cli/issues/84)) ([472e816](https://github.com/vaadin/magi-cli/commit/472e816))
+
 # [0.19.0](https://github.com/vaadin/magi-cli/compare/v0.18.0...v0.19.0) (2019-03-18)
 
 
