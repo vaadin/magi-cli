@@ -40,6 +40,10 @@ program
     'Prepares package.json and runs modulizer with pre-configured arguments'
   )
   .command(
+    'check-bower',
+    'Checks that Bower dependency ranges are correct for webjars.org deployment'
+  )
+  .command(
     'check-version',
     'Checks that version getters in the components are in sync with package.json'
   )

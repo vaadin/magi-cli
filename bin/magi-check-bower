@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const semver = require('semver');
+const bowerComponents = path.resolve(process.cwd(), './bower_components');
+const bowerJsonPath = path.resolve(process.cwd(), './bower.json');
+const bowerJson = require(bowerJsonPath);
+
+function main() {
+  function verifyIfPresent(resolvedPackage, bowerJson, dependenciesPath) {
+    const projectDependency = (bowerJson[dependenciesPath] || {})[resolvedPackage.name];
+    if (projectDependency) {
+      // allow branches for devDependencies, e.g. in `vaadin-upload`:
+      // "mock-http-request": "abuinitski/MockHttpRequest#npm_fix"
+      if (dependenciesPath === 'devDependencies') {
+        return true;
+      }
+      // allow the version ranges like this one: "^v2.0.0"
+      const match = projectDependency.match(/\^?v?(\d+\.){1}(\d+\.){1}(\d+)(-(alpha|beta)\d+)?$/);
+      if (match === null) {
+        console.error('Invalid version: ' + projectDependency);
+        return false;
+      }
+      const range = match[0];
+      if (!semver.satisfies(resolvedPackage.version, range)) {
+        console.error(`
+          range ${bowerJsonPath}.${dependenciesPath}.${resolvedPackage.name}: '${range}'
+          incorrectly resolved to: '${resolvedPackage.version}'
+          possible correct range: '^${resolvedPackage.version}'
+        `);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  let bowerJsonValid = true;
+
+  for (const packageDirectoryName of fs.readdirSync(bowerComponents)) {
+    const dependencyFilePath = path.join(bowerComponents, packageDirectoryName, '.bower.json');
+    const resolvedPackage = require(`${dependencyFilePath}`);
+    bowerJsonValid = verifyIfPresent(resolvedPackage, bowerJson, 'dependencies')
+            && verifyIfPresent(resolvedPackage, bowerJson, 'devDependencies')
+            && bowerJsonValid;
+  }
+
+  if (bowerJsonValid) {
+    return Promise.resolve();
+  } else {
+    return Promise.reject(
+      new Error(`Bower has dependencies resolutions that violate semver and don't allow webjars.org deployment.`)
+    );
+  }
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
