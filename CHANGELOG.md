@@ -1,3 +1,10 @@
+# [0.21.0](https://github.com/vaadin/magi-cli/compare/v0.20.0...v0.21.0) (2019-03-18)
+
+
+### Features
+
+* add update-version command for npm preversion ([#86](https://github.com/vaadin/magi-cli/issues/86)) ([f3166cb](https://github.com/vaadin/magi-cli/commit/f3166cb))
+
 # [0.20.0](https://github.com/vaadin/magi-cli/compare/v0.19.0...v0.20.0) (2019-03-18)
 
 
