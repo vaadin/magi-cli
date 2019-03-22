@@ -31,6 +31,9 @@ async function main() {
     throw 'Error: expected working directory to have clean git repository state';
   }
 
+  // Delete husky config in package.json
+  delete workingPackage.husky;
+
   // Delete devDependencies in package.json
   delete workingPackage.devDependencies;
 
