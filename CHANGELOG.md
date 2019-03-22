@@ -1,3 +1,10 @@
+## [0.21.1](https://github.com/vaadin/magi-cli/compare/v0.21.0...v0.21.1) (2019-03-22)
+
+
+### Bug Fixes
+
+* **p3-convert:** delete husky git hooks config in package.json ([#91](https://github.com/vaadin/magi-cli/issues/91)) ([95641f0](https://github.com/vaadin/magi-cli/commit/95641f0))
+
 # [0.21.0](https://github.com/vaadin/magi-cli/compare/v0.20.0...v0.21.0) (2019-03-18)
 
 
