@@ -35,13 +35,6 @@ const {getGitHubApi} = require('../lib/github-api.js');
 
 async function main(version) {
 
-  /* Check if component version is correct */
-  try {
-    await exe('magi check-version');
-  } catch (e) {
-    throw new Error('Version getter is out of sync with package.json. Cannot release');
-  }
-
   /* Check if Bower dependencies have correct ranges */
   try {
     await exe('magi check-bower');
