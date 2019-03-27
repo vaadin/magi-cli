@@ -1,3 +1,10 @@
+## [0.21.2](https://github.com/vaadin/magi-cli/compare/v0.21.1...v0.21.2) (2019-03-27)
+
+
+### Bug Fixes
+
+* run check-version in update-version ([#93](https://github.com/vaadin/magi-cli/issues/93)) ([cb94ad7](https://github.com/vaadin/magi-cli/commit/cb94ad7))
+
 ## [0.21.1](https://github.com/vaadin/magi-cli/compare/v0.21.0...v0.21.1) (2019-03-22)
 
 
