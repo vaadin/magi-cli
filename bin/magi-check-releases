@@ -1,0 +1,139 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander');
+program
+  .option('--sort-commit', 'Sort entries by commit numbers')
+  .option('--show-passed', 'Show repositories that are up to date')
+  .parse(process.argv);
+const {getGitHubApi} = require('../lib/github-api.js');
+const request = require("request");
+const readline = require('readline');
+
+const semverVersionString = /((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)/;
+const versionString = /^(Version |Release |)((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)/;
+const successColor = '\x1b[32m';
+const failedColor = '\x1b[31m';
+const neutralColor = '\x1b[36m';
+const resetColor = '\x1b[0m';
+
+let logs = []
+
+async function main() {
+  const platformVersions = await getPlatformJson();
+  const gh = await getGitHubApi(program.auth);
+
+  const platformString = 'Platform version';
+  const ghString = 'Github latest version';
+  const numberString = 'Number of commits not included';
+
+  for (const item of platformVersions) {
+    const componentRepo = await gh.getRepo(`vaadin/${item.repo}`);
+    process.stdout.clearLine();
+    process.stdout.write(`Processing ${neutralColor}${item.repo}${resetColor} ... Done: ` +
+      platformVersions.indexOf(item) + ' from ' +
+      platformVersions.length + '\r');
+
+    let commitsObj;
+    try {
+      commitsObj = await componentRepo.listCommits();
+      const commits = commitsObj.data.map(item => item.commit.message);
+
+      const latestRelease = commits.find(item => versionString.test(item)) || 'No version found';
+      const latestReleaseVersion = latestRelease.match(semverVersionString)[0];
+      const latestReleaseIndex = commits.indexOf(latestRelease);
+
+      const platformVersionString = alignStringLength(platformString, item.version);
+      const ghVersionString = alignStringLength(ghString, latestReleaseVersion);
+      const numberOfCommitsString = (latestReleaseIndex > 0) ?
+        alignStringLength(numberString, latestReleaseIndex + 1) :
+        alignStringLength(numberString, 0);
+
+      const logString = (item.version !== latestReleaseVersion ? failedColor : successColor) + '| %s' + ' | ' + resetColor +
+        (item.version !== latestReleaseVersion ? failedColor : successColor) + '%s' + ' | ' + resetColor +
+        (latestReleaseIndex > 0                ? failedColor : successColor) + '%s' + ' | ' + resetColor +
+        neutralColor + '%s' + resetColor;
+
+      logs.push({
+        log: logString,
+        platformVersion: platformVersionString,
+        ghVersion: ghVersionString,
+        commitsNumber: numberOfCommitsString,
+        repo: item.repo,
+        mismatch: item.version !== latestReleaseVersion
+      });
+    } catch(error) {
+      const logString = failedColor + '| %s' + ' | ' + resetColor +
+        failedColor + '%s' + ' | ' + resetColor +
+        failedColor + '%s' + ' | ' + resetColor +
+        neutralColor + '%s' + resetColor;
+
+      logs.push({
+        log: logString,
+        platformVersion: alignStringLength(platformString, 'No info found'),
+        ghVersion: alignStringLength(ghString, 'No info found'),
+        commitsNumber: alignStringLength(numberString, 'No info found'),
+        repo: item.repo,
+        mismatch: true
+      });
+    }
+  }
+
+  process.stdout.clearLine();
+  console.log(`${neutralColor}Options:${resetColor}\n` +
+              `${successColor}Sort order is${resetColor} ${!!program.sortCommit ? 'Number of commits' : 'Version mismatch'}\n` +
+              `${successColor}Show passed${resetColor}: ${!!program.showPassed ? 'Yes' : 'No'}`);
+
+  console.log(neutralColor + '%s' + resetColor, `| ${platformString} | ${ghString} | ${numberString} | Repo`);
+  if (!!program.sortCommit) {
+    logs.sort((curr, next) => parseInt(next.commitsNumber) - parseInt(curr.commitsNumber));
+  } else {
+    logs.sort((curr, next) => {
+      if (curr.mismatch && next.mismatch) {
+        return 0;
+      } else if (curr.mismtach && !next.mismtach) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+  }
+
+  if (!program.showPassed) {
+    logs = logs.filter(item => item.mismtach === true || item.commitsNumber > 0 || isNaN(item.commitsNumber));
+  }
+
+  logs.forEach(entry => console.log(entry.log, entry.platformVersion, entry.ghVersion, entry.commitsNumber, entry.repo));
+}
+
+function alignStringLength(initialString, newString) {
+  return newString.toString() + initialString.replace(/./g, ' ').slice(newString.toString().length);
+}
+
+async function getPlatformJson() {
+  return new Promise(resolve => {
+    request({
+      url: 'https://raw.githubusercontent.com/vaadin/platform/master/versions.json',
+      json: true
+    }, function (error, response, body) {
+      const platformVersions =
+        Object.entries(body.vaadin)
+            .concat(Object.entries(body.core))
+            .filter(item => /^vaadin-.*/.test(item[0]) && versionString.test(item[1].jsVersion))
+            .map(item => {
+              return {
+                repo: item[0],
+                version: item[1].jsVersion
+              }
+            });
+      resolve(platformVersions);
+    });
+  });
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

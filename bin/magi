@@ -44,6 +44,10 @@ program
     'Checks that Bower dependency ranges are correct for webjars.org deployment'
   )
   .command(
+    'check-releases [--sort-commit] [--show-passed]',
+    'Shows the information on releases of the components'
+  )
+  .command(
     'check-version',
     'Checks that version getters in the components are in sync with package.json'
   )
