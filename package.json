@@ -30,5 +30,9 @@
     "@semantic-release/git": "^7.0.12",
     "@semantic-release/npm": "^5.1.9",
     "semantic-release": "^15.13.16"
+  },
+  "resolutions": {
+    "fstream": "1.0.12",
+    "tar": "4.4.8"
   }
 }
