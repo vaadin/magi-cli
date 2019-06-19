@@ -1,3 +1,10 @@
+# [0.22.0](https://github.com/vaadin/magi-cli/compare/v0.21.2...v0.22.0) (2019-06-19)
+
+
+### Features
+
+* add check-release command ([#94](https://github.com/vaadin/magi-cli/issues/94)) ([0dd89b4](https://github.com/vaadin/magi-cli/commit/0dd89b4))
+
 ## [0.21.2](https://github.com/vaadin/magi-cli/compare/v0.21.1...v0.21.2) (2019-03-27)
 
 
