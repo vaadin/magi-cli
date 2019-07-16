@@ -1,3 +1,10 @@
+## [0.22.1](https://github.com/vaadin/magi-cli/compare/v0.22.0...v0.22.1) (2019-07-16)
+
+
+### Bug Fixes
+
+* Remove extends annotations after modularization ([#97](https://github.com/vaadin/magi-cli/issues/97)) ([4ec838b](https://github.com/vaadin/magi-cli/commit/4ec838b))
+
 # [0.22.0](https://github.com/vaadin/magi-cli/compare/v0.21.2...v0.22.0) (2019-06-19)
 
 
