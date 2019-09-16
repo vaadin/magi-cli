@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+'use strict';
+
+const path = require('path');
+const {find} = require('find-in-files');
+const replace = require('replace-in-file');
+const src = path.resolve(process.cwd(), './src');
+
+function info(msg) {
+  console.log(' [magi] 🌀  \x1b[36m%s\x1b[0m ...', msg);
+}
+
+function done(msg) {
+  console.log(' [magi] 🎉  \x1b[33m%s\x1b[0m \n', msg.replace(/(https?:[^\s]+)/, '\x1b[32m $1\x1b[0m'));
+}
+
+async function main() {
+  const results = await find(/(?<=static get properties\(\) {\n+\s+return {)[\s\S]+(?=};)/, src);
+
+  for (var result in results) {
+    const res = results[result];
+    const props = results[result].matches[0].trim().split(',\n\n').filter(prop => /notify:\s+true/g.test(prop));
+    const notifyingProps = props.map(prop => {
+      const regexpWithoutComments = new RegExp(/^((?![\*|\/\/])[\s\S])*$/gm);
+      const propWithoutComments = prop.match(regexpWithoutComments)[0];
+      return prop.match(/(?<=\s*)\w+(?=: {)/)[0].replace(/[A-Z]/g, upperCaseLetter => '-' + upperCaseLetter.toLowerCase());
+    });
+
+    let whitespaces = '',
+        targetString = '',
+        prepandString = '',
+        appendString = '',
+        targetStringWithEvents = '';
+
+    if (result.indexOf('mixin') !== -1) {
+      const scriptTag = await find(/\ +};\s+<\/script>/, src, result.substr(result.lastIndexOf('/') + 1) + '$');
+      targetString = appendString = scriptTag[result].matches[0];
+      whitespaces = targetString.substr(0, targetString.indexOf('}'));
+      whitespaces += whitespaces;
+    } else {
+      const definition = await find(/ +customElements.define\(.*\);/, src, result.substr(result.lastIndexOf('/') + 1) + '$');
+      targetString = prepandString = definition[result].matches[0];
+      whitespaces = targetString.substr(0, targetString.indexOf('custom'));
+    }
+
+    for (const prop of notifyingProps) {
+      const findings = await find(new RegExp(`@event ${prop}-changed\\s+`), src)
+      if (Object.entries(findings).length === 0) {
+        info(`Missing docs for the event ${prop}-changed, adding docs`);
+        targetStringWithEvents += '\n' +
+          whitespaces + '/**\n' +
+          whitespaces + ` * Fired when \`${prop}\` value changes.\n` +
+          whitespaces + ' *\n' +
+          whitespaces + ` * @event ${prop}-changed\n` +
+          whitespaces + ' */\n';
+      } else {
+        done(`Docs for the event ${prop}-changed do exist`);
+      }
+    }
+
+    targetStringWithEvents =
+      prepandString + targetStringWithEvents + appendString;
+
+    await replace({files: [result.substr(result.indexOf('src'))], from: targetString, to: targetStringWithEvents})
+  }
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
