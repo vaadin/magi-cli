@@ -14,54 +14,88 @@ function done(msg) {
   console.log(' [magi] 🎉  \x1b[33m%s\x1b[0m \n', msg.replace(/(https?:[^\s]+)/, '\x1b[32m $1\x1b[0m'));
 }
 
+/**
+ * Should be overriden if different annotation template is required.
+ * @param {String} prop - The property name 
+ * @param {String} event - The event name 
+ * @param {String} whitespaces - The string to be used as indentation
+ * 
+ * @return {String} the event annotation to be added to the file
+ */
+function getAnnotationTemplate(prop, event, whitespaces) {
+  return '\n' +
+    whitespaces + '/**\n' +
+    whitespaces + ` * Fired when \`${prop}\` property value changes.\n` +
+    whitespaces + ' *\n' +
+    whitespaces + ` * @event ${event}\n` +
+    whitespaces + ' */\n';
+}
+
 async function main() {
+  // Look for the properties getter
   const results = await find(/(?<=static get properties\(\) {\n+\s+return {)[\s\S]+(?=};)/, src);
 
+  // Go through the files where getter was found
   for (var result in results) {
     const res = results[result];
+
+    // Split properties block by newlines and filter for `notyfying` props
     const props = results[result].matches[0].trim().split(',\n\n').filter(prop => /notify:\s+true/g.test(prop));
-    const notifyingProps = props.map(prop => {
-      const regexpWithoutComments = new RegExp(/^((?![\*|\/\/])[\s\S])*$/gm);
-      const propWithoutComments = prop.match(regexpWithoutComments)[0];
-      return prop.match(/(?<=\s*)\w+(?=: {)/)[0].replace(/[A-Z]/g, upperCaseLetter => '-' + upperCaseLetter.toLowerCase());
+
+    const notifyingProps = [];
+
+    props.forEach(prop => {
+      // Cleanup the comments section from the property to avoid false detection of the property
+      const withoutComments = new RegExp(/^((?![\*|\/\/])[\s\S])*$/gm);
+      const propWithoutComments = prop.match(withoutComments)[0];
+
+      // Get the first property from the string in format: `property: {`
+      const property = propWithoutComments.match(/(?<=\s*)\w+(?=: {)/)[0];
+      notifyingProps.push({
+        property: property,
+        event: property.replace(/[A-Z]/g, upperCaseLetter => '-' + upperCaseLetter.toLowerCase()) + '-changed'
+      });
     });
 
     let whitespaces = '',
-        targetString = '',
+        targetLine = '',
         prepandString = '',
         appendString = '',
-        targetStringWithEvents = '';
+        eventsAnnotation = '';
 
+    // Look for a line in the same file where the event annotation should be inserted
+    // For mixin searching for the closing script tag,
+    // For other files searching for the customElement definition line
     if (result.indexOf('mixin') !== -1) {
       const scriptTag = await find(/\ +};\s+<\/script>/, src, result.substr(result.lastIndexOf('/') + 1) + '$');
-      targetString = appendString = scriptTag[result].matches[0];
-      whitespaces = targetString.substr(0, targetString.indexOf('}'));
+      targetLine = appendString = scriptTag[result].matches[0];
+
+      // Getting whitespaces from the string to follow the proper indentation.
+      whitespaces = targetLine.substr(0, targetLine.indexOf('}'));
       whitespaces += whitespaces;
+
     } else {
       const definition = await find(/ +customElements.define\(.*\);/, src, result.substr(result.lastIndexOf('/') + 1) + '$');
-      targetString = prepandString = definition[result].matches[0];
-      whitespaces = targetString.substr(0, targetString.indexOf('custom'));
+      targetLine = prepandString = definition[result].matches[0];
+      whitespaces = targetLine.substr(0, targetLine.indexOf('custom'));
+
     }
 
-    for (const prop of notifyingProps) {
-      const findings = await find(new RegExp(`@event ${prop}-changed\\s+`), src)
+    // For each of the properties check if annotation exists in any of the files
+    for (const entry of notifyingProps) {
+      const findings = await find(new RegExp(`@event ${entry.event}\\s+`), src)
+
       if (Object.entries(findings).length === 0) {
-        info(`Missing docs for the event ${prop}-changed, adding docs`);
-        targetStringWithEvents += '\n' +
-          whitespaces + '/**\n' +
-          whitespaces + ` * Fired when \`${prop}\` value changes.\n` +
-          whitespaces + ' *\n' +
-          whitespaces + ` * @event ${prop}-changed\n` +
-          whitespaces + ' */\n';
+        info(`Missing docs for the event ${entry.event}, adding docs`);
+        eventsAnnotation += getAnnotationTemplate(entry.property, entry.event, whitespaces)
       } else {
-        done(`Docs for the event ${prop}-changed do exist`);
+        done(`Docs for the event ${entry.event} do exist`);
       }
     }
 
-    targetStringWithEvents =
-      prepandString + targetStringWithEvents + appendString;
-
-    await replace({files: [result.substr(result.indexOf('src'))], from: targetString, to: targetStringWithEvents})
+    // If annotation doesn't exist, it will be added to the same file
+    await replace({files: [result.substr(result.indexOf('src'))], from: targetLine,
+      to: prepandString + eventsAnnotation + appendString})
   }
 }
 
