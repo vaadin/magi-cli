@@ -56,7 +56,7 @@ program
     'Update version getters in the components. Should be run from npm preversion'
   )
   .command(
-    'check-events-docs',
-    'Check and create missing docs for the Polymer `*-changed` events of the existing properties'
+    'check-events-docs [--create]',
+    'Check missing docs for the Polymer `*-changed` events of the existing properties'
   )
   .parse(process.argv);

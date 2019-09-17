@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
+const program = require('commander')
 const path = require('path');
 const {find} = require('find-in-files');
 const replace = require('replace-in-file');
@@ -13,6 +14,13 @@ function info(msg) {
 function done(msg) {
   console.log(' [magi] 🎉  \x1b[33m%s\x1b[0m \n', msg.replace(/(https?:[^\s]+)/, '\x1b[32m $1\x1b[0m'));
 }
+
+program
+  .option('--create', 'Create missing annotation for the events')
+  .parse(process.argv);
+
+// Boolean to define if the script should create missing annotation
+const create = program.create;
 
 /**
  * Should be overriden if different annotation template is required.
@@ -53,11 +61,13 @@ async function main() {
       const propWithoutComments = prop.match(withoutComments)[0];
 
       // Get the first property from the string in format: `property: {`
-      const property = propWithoutComments.match(/(?<=\s*)\w+(?=: {)/)[0];
-      notifyingProps.push({
-        property: property,
-        event: property.replace(/[A-Z]/g, upperCaseLetter => '-' + upperCaseLetter.toLowerCase()) + '-changed'
-      });
+      if (propWithoutComments.match(/(?<=\s*)\w+(?=: {)/)) {
+        const property = propWithoutComments.match(/(?<=\s*)\w+(?=: {)/)[0];
+        notifyingProps.push({
+          property: property,
+          event: property.replace(/[A-Z]/g, upperCaseLetter => '-' + upperCaseLetter.toLowerCase()) + '-changed'
+        });
+      }
     });
 
     let whitespaces = '',
@@ -90,21 +100,22 @@ async function main() {
 
       if (Object.entries(findings).length === 0) {
         shouldThrow = true;
-        info(`Missing docs for the event ${entry.event}, adding docs`);
+        info(`Missing docs for the event ${entry.event}${create ? ', adding docs' : ''}`);
         eventsAnnotation += getAnnotationTemplate(entry.property, entry.event, whitespaces)
       } else {
         done(`Docs for the event ${entry.event} do exist`);
       }
     }
 
-    // If annotation doesn't exist, it will be added to the same file
-    await replace({files: [result.substr(result.indexOf('src'))], from: targetLine,
+    // If `create` flag is used and annotation doesn't exist, it will be added to the same file
+    create && await replace({files: [result.substr(result.indexOf('src'))], from: targetLine,
       to: prepandString + eventsAnnotation + appendString})
   }
 
   // It's required for blocking commiting with husky pre-commit
   if (shouldThrow) {
-    throw "\n\x1b[31m Some of the event annotations was generated, please review the changes before commiting!\x1b[0m\n";
+    throw `\n\x1b[31m Some of the event annotations was ${create ? 'generated, please review the changes before commiting!' :
+      'missing, please run `magi check-events-docs --create` to generate those'}\x1b[0m\n`;
   }
 }
 
