@@ -35,6 +35,9 @@ async function main() {
   // Look for the properties getter
   const results = await find(/(?<=static get properties\(\) {\n+\s+return {)[\s\S]+(?=};)/, src);
 
+  // Boolean to define if the script should throw error in case some annotation is missing
+  let shouldThrow = false;
+
   // Go through the files where getter was found
   for (var result in results) {
     const res = results[result];
@@ -86,6 +89,7 @@ async function main() {
       const findings = await find(new RegExp(`@event ${entry.event}\\s+`), src)
 
       if (Object.entries(findings).length === 0) {
+        shouldThrow = true;
         info(`Missing docs for the event ${entry.event}, adding docs`);
         eventsAnnotation += getAnnotationTemplate(entry.property, entry.event, whitespaces)
       } else {
@@ -96,6 +100,11 @@ async function main() {
     // If annotation doesn't exist, it will be added to the same file
     await replace({files: [result.substr(result.indexOf('src'))], from: targetLine,
       to: prepandString + eventsAnnotation + appendString})
+  }
+
+  // It's required for blocking commiting with husky pre-commit
+  if (shouldThrow) {
+    throw "\n\x1b[31m Some of the event annotations was generated, please review the changes before commiting!\x1b[0m\n";
   }
 }
 
