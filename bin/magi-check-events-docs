@@ -1,0 +1,127 @@
+#!/usr/bin/env node
+'use strict';
+
+const program = require('commander')
+const path = require('path');
+const {find} = require('find-in-files');
+const replace = require('replace-in-file');
+const src = path.resolve(process.cwd(), './src');
+
+function info(msg) {
+  console.log(' [magi] 🌀  \x1b[36m%s\x1b[0m ...', msg);
+}
+
+function done(msg) {
+  console.log(' [magi] 🎉  \x1b[33m%s\x1b[0m \n', msg.replace(/(https?:[^\s]+)/, '\x1b[32m $1\x1b[0m'));
+}
+
+program
+  .option('--create', 'Create missing annotation for the events')
+  .parse(process.argv);
+
+// Boolean to define if the script should create missing annotation
+const create = program.create;
+
+/**
+ * Should be overriden if different annotation template is required.
+ * @param {String} prop - The property name 
+ * @param {String} event - The event name 
+ * @param {String} whitespaces - The string to be used as indentation
+ * 
+ * @return {String} the event annotation to be added to the file
+ */
+function getAnnotationTemplate(prop, event, whitespaces) {
+  return '\n' +
+    whitespaces + '/**\n' +
+    whitespaces + ` * Fired when \`${prop}\` property value changes.\n` +
+    whitespaces + ' *\n' +
+    whitespaces + ` * @event ${event}\n` +
+    whitespaces + ' */\n';
+}
+
+async function main() {
+  // Look for the properties getter
+  const results = await find(/(?<=static get properties\(\) {\n+\s+return {)[\s\S]+(?=};)/, src);
+
+  // Boolean to define if the script should throw error in case some annotation is missing
+  let shouldThrow = false;
+
+  // Go through the files where getter was found
+  for (var result in results) {
+    const res = results[result];
+
+    // Split properties block by newlines and filter for `notyfying` props
+    const props = results[result].matches[0].trim().split(',\n\n').filter(prop => /notify:\s+true/g.test(prop));
+
+    const notifyingProps = [];
+
+    props.forEach(prop => {
+      // Cleanup the comments section from the property to avoid false detection of the property
+      const withoutComments = new RegExp(/^((?![\*|\/\/])[\s\S])*$/gm);
+      const propWithoutComments = prop.match(withoutComments)[0];
+
+      // Get the first property from the string in format: `property: {`
+      if (propWithoutComments.match(/(?<=\s*)\w+(?=: {)/)) {
+        const property = propWithoutComments.match(/(?<=\s*)\w+(?=: {)/)[0];
+        notifyingProps.push({
+          property: property,
+          event: property.replace(/[A-Z]/g, upperCaseLetter => '-' + upperCaseLetter.toLowerCase()) + '-changed'
+        });
+      }
+    });
+
+    let whitespaces = '',
+        targetLine = '',
+        prepandString = '',
+        appendString = '',
+        eventsAnnotation = '';
+
+    // Look for a line in the same file where the event annotation should be inserted
+    // For mixin searching for the closing script tag,
+    // For other files searching for the customElement definition line
+    if (result.indexOf('mixin') !== -1) {
+      const scriptTag = await find(/\ +};\s+<\/script>/, src, result.substr(result.lastIndexOf('/') + 1) + '$');
+      targetLine = appendString = scriptTag[result].matches[0];
+
+      // Getting whitespaces from the string to follow the proper indentation.
+      whitespaces = targetLine.substr(0, targetLine.indexOf('}'));
+      whitespaces += whitespaces;
+
+    } else {
+      const definition = await find(/ +customElements.define\(.*\);/, src, result.substr(result.lastIndexOf('/') + 1) + '$');
+      targetLine = prepandString = definition[result].matches[0];
+      whitespaces = targetLine.substr(0, targetLine.indexOf('custom'));
+
+    }
+
+    // For each of the properties check if annotation exists in any of the files
+    for (const entry of notifyingProps) {
+      const findings = await find(new RegExp(`@event ${entry.event}\\s+`), src)
+
+      if (Object.entries(findings).length === 0) {
+        shouldThrow = true;
+        info(`Missing docs for the event ${entry.event}${create ? ', adding docs' : ''}`);
+        eventsAnnotation += getAnnotationTemplate(entry.property, entry.event, whitespaces)
+      } else {
+        done(`Docs for the event ${entry.event} do exist`);
+      }
+    }
+
+    // If `create` flag is used and annotation doesn't exist, it will be added to the same file
+    create && await replace({files: [result.substr(result.indexOf('src'))], from: targetLine,
+      to: prepandString + eventsAnnotation + appendString})
+  }
+
+  // It's required for blocking commiting with husky pre-commit
+  if (shouldThrow) {
+    throw `\n\x1b[31m Some of the event annotations was ${create ? 'generated, please review the changes before commiting!' :
+      'missing, please run `magi check-events-docs --create` to generate those'}\x1b[0m\n`;
+  }
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
