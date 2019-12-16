@@ -1,3 +1,10 @@
+# [0.23.0](https://github.com/vaadin/magi-cli/compare/v0.22.1...v0.23.0) (2019-12-16)
+
+
+### Features
+
+* support updating version in .ts files ([#102](https://github.com/vaadin/magi-cli/issues/102)) ([a1ae65a](https://github.com/vaadin/magi-cli/commit/a1ae65a))
+
 ## [0.22.1](https://github.com/vaadin/magi-cli/compare/v0.22.0...v0.22.1) (2019-07-16)
 
 
