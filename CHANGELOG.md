@@ -1,3 +1,10 @@
+## [0.25.1](https://github.com/vaadin/magi-cli/compare/v0.25.0...v0.25.1) (2020-04-15)
+
+
+### Bug Fixes
+
+* cleanup after generating TS defs ([#107](https://github.com/vaadin/magi-cli/issues/107)) ([3d2af82](https://github.com/vaadin/magi-cli/commit/3d2af82))
+
 # [0.25.0](https://github.com/vaadin/magi-cli/compare/v0.24.0...v0.25.0) (2020-04-15)
 
 ### Features
