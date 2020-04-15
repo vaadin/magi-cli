@@ -185,6 +185,13 @@ async function main() {
 
     runSync('npm run generate-typings');
   }
+
+  // Remove gen-typescript-declarations
+  replace.sync({
+    files: ['package.json'],
+    from: /.*"@polymer\/gen-typescript-declarations": "\^1\.6\.2",*\n/g,
+    to: ''
+  });
 }
 
 main()
