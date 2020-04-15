@@ -1,5 +1,10 @@
-# [0.23.0](https://github.com/vaadin/magi-cli/compare/v0.22.1...v0.23.0) (2019-12-16)
+# [0.25.0](https://github.com/vaadin/magi-cli/compare/v0.24.0...v0.25.0) (2020-04-15)
 
+### Features
+
+* generate TypeScript definitions ([#106](https://github.com/vaadin/magi-cli/issues/106)) ([0f98c1f](https://github.com/vaadin/magi-cli/commit/0f98c1f))
+
+# [0.24.0](https://github.com/vaadin/magi-cli/compare/v0.22.1...v0.24.0) (2019-11-05)
 
 ### Features
 
