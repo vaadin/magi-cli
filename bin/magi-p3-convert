@@ -162,6 +162,29 @@ async function main() {
     from: /.*@extends Vaadin\..*\n/g,
     to: ''
   });
+
+  // Fix @mixes annotations
+  replace.sync({
+    files: ['*.js', 'src/*'],
+    from: /@mixes Vaadin\./g,
+    to: '@mixes '
+  });
+
+  // Replace @memberof with @extends
+  replace.sync({
+    files: ['src/*'],
+    from: /@memberof Vaadin/g,
+    to: '@extends PolymerElement'
+  });
+
+  if (fs.existsSync('gen-tsd.json')) {
+    // Needed for gen-typescript-declarations to detect project type
+    rimraf.sync('bower_components');
+
+    runSync('npm install');
+
+    runSync('npm run generate-typings');
+  }
 }
 
 main()
