@@ -1,3 +1,10 @@
+## [0.25.2](https://github.com/vaadin/magi-cli/compare/v0.25.1...v0.25.2) (2020-04-29)
+
+
+### Bug Fixes
+
+* **p3-convert:** change mixes for Polymer mixins ([#109](https://github.com/vaadin/magi-cli/issues/109)) ([8915d2d](https://github.com/vaadin/magi-cli/commit/8915d2d))
+
 ## [0.25.1](https://github.com/vaadin/magi-cli/compare/v0.25.0...v0.25.1) (2020-04-15)
 
 
