@@ -166,7 +166,7 @@ async function main() {
   // Fix @mixes annotations
   replace.sync({
     files: ['*.js', 'src/*'],
-    from: /@mixes Vaadin\./g,
+    from: /@mixes (Polymer|Vaadin)\./g,
     to: '@mixes '
   });
 
