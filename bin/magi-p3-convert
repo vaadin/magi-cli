@@ -110,6 +110,12 @@ async function main() {
     .map(([from, to]) => `${from},@vaadin/${from},${to.replace(/^.*#/, '')}`)
   );
 
+  // Detect highcharts version
+  const {highcharts} = bowerJson.dependencies;
+  if (highcharts) {
+    dmStrings.push(`highcharts,highcharts,${highcharts}`);
+  }
+
   // Convert P2 to P3
   runSync(`
     modulizer \
