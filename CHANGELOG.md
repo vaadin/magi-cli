@@ -1,3 +1,10 @@
+## [0.26.1](https://github.com/vaadin/magi-cli/compare/v0.26.0...v0.26.1) (2020-05-13)
+
+
+### Bug Fixes
+
+* replace all occurrences of version ([#111](https://github.com/vaadin/magi-cli/issues/111)) ([c448114](https://github.com/vaadin/magi-cli/commit/c448114))
+
 # [0.26.0](https://github.com/vaadin/magi-cli/compare/v0.25.2...v0.26.0) (2020-05-12)
 
 
