@@ -145,7 +145,8 @@ async function main() {
   }
 
   if (magiPost) {
-    magiPost.files = [...postProcess.files, ...magiPost.files];
+    // filter out duplicates to prevent package.json from being rewritten twice
+    magiPost.files = [...postProcess.files, ...magiPost.files].filter((item, pos, self) => self.indexOf(item) == pos);
     magiPost.from = [...postProcess.from, ...magiPost.from];
     magiPost.to = [...postProcess.to, ...magiPost.to];
   } else {
