@@ -1,3 +1,10 @@
+## [0.26.2](https://github.com/vaadin/magi-cli/compare/v0.26.1...v0.26.2) (2020-05-18)
+
+
+### Bug Fixes
+
+* filter files in p3-post for duplicates ([#114](https://github.com/vaadin/magi-cli/issues/114)) ([b65d9d6](https://github.com/vaadin/magi-cli/commit/b65d9d6))
+
 ## [0.26.1](https://github.com/vaadin/magi-cli/compare/v0.26.0...v0.26.1) (2020-05-13)
 
 
