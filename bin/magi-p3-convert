@@ -191,6 +191,16 @@ async function main() {
     runSync('npm install');
 
     runSync('npm run generate-typings');
+
+    if (fs.existsSync(path.join('@types', 'interfaces.d.ts'))) {
+      console.log('Adding @types export');
+      const entry = packageJson.main.replace('.js', '');
+      replace.sync({
+        files: [`${entry}.d.ts`],
+        from: `export * from './src/${entry}.js'`,
+        to: `export * from './src/${entry}.js';\nexport * from './@types/interfaces'`
+      });
+    }
   }
 
   // Remove gen-typescript-declarations
