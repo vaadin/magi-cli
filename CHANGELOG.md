@@ -1,3 +1,10 @@
+## [0.26.3](https://github.com/vaadin/magi-cli/compare/v0.26.2...v0.26.3) (2020-06-16)
+
+
+### Bug Fixes
+
+* **p3-convert:** add export for TS interfaces ([#116](https://github.com/vaadin/magi-cli/issues/116)) ([4684180](https://github.com/vaadin/magi-cli/commit/4684180))
+
 ## [0.26.2](https://github.com/vaadin/magi-cli/compare/v0.26.1...v0.26.2) (2020-05-18)
 
 
