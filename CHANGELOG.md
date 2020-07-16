@@ -1,3 +1,10 @@
+## [0.26.4](https://github.com/vaadin/magi-cli/compare/v0.26.3...v0.26.4) (2020-07-16)
+
+
+### Bug Fixes
+
+* use custom gen-typescript-declarations ([#117](https://github.com/vaadin/magi-cli/issues/117)) ([660878c](https://github.com/vaadin/magi-cli/commit/660878c))
+
 ## [0.26.3](https://github.com/vaadin/magi-cli/compare/v0.26.2...v0.26.3) (2020-06-16)
 
 
