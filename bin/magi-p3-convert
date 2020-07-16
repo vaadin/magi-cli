@@ -206,7 +206,7 @@ async function main() {
   // Remove gen-typescript-declarations
   replace.sync({
     files: ['package.json'],
-    from: /.*"@polymer\/gen-typescript-declarations": "\^1\.6\.2",*\n/g,
+    from: /.*"@web-padawan\/gen-typescript-declarations": "\^1\.6\.2",*\n/g,
     to: ''
   });
 }
