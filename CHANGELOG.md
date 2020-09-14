@@ -1,3 +1,10 @@
+## [0.26.5](https://github.com/vaadin/magi-cli/compare/v0.26.4...v0.26.5) (2020-09-14)
+
+
+### Bug Fixes
+
+* update resolutions for yarn flat ([#118](https://github.com/vaadin/magi-cli/issues/118)) ([9a2b075](https://github.com/vaadin/magi-cli/commit/9a2b075))
+
 ## [0.26.4](https://github.com/vaadin/magi-cli/compare/v0.26.3...v0.26.4) (2020-07-16)
 
 
