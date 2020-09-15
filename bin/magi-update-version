@@ -28,7 +28,7 @@ async function main() {
 
   const fromRegex = new RegExp(oldVersion, 'g');
   const newVersion = version.replace(/^v/, '');
-  const changes = await replace({files: ['src/*.{html,ts}'], from: fromRegex, to: newVersion});
+  const changes = await replace({files: ['src/*.{html,js,ts}'], from: fromRegex, to: newVersion});
   // Stage the changes for the new version tag commit
   if (changes.length) {
     await exe(`git update-index -- ${changes.join(' ')}`);
