@@ -1,3 +1,10 @@
+# [0.27.0](https://github.com/vaadin/magi-cli/compare/v0.26.5...v0.27.0) (2020-09-16)
+
+
+### Features
+
+* allow to update version in .js files ([#119](https://github.com/vaadin/magi-cli/issues/119)) ([67d77da](https://github.com/vaadin/magi-cli/commit/67d77da))
+
 ## [0.26.5](https://github.com/vaadin/magi-cli/compare/v0.26.4...v0.26.5) (2020-09-14)
 
 
