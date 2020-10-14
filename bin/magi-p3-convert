@@ -49,7 +49,7 @@ async function main() {
 
   // Visit all source files and replace MAGI markers
   replace.sync({
-    files: ['*.js', '*.html', 'src/*', 'demo/*', 'test/*', 'test/visual/*', 'theme/*/*'],
+    files: ['*.js', '*.html', 'src/*', 'mixins/*', 'demo/*', 'test/*', 'test/visual/*', 'theme/*/*'],
     from: [/.*MAGI ADD (START|END).*\n/g, /.*MAGI REMOVE START[\s\S]*?MAGI REMOVE END.*\n/g],
     to: ''
   });
