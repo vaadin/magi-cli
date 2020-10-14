@@ -1,3 +1,10 @@
+# [0.28.0](https://github.com/vaadin/magi-cli/compare/v0.27.1...v0.28.0) (2020-10-14)
+
+
+### Features
+
+* do not pin Polymer in p3-convert ([#120](https://github.com/vaadin/magi-cli/issues/120)) ([7130cd0](https://github.com/vaadin/magi-cli/commit/7130cd0))
+
 ## [0.27.1](https://github.com/vaadin/magi-cli/compare/v0.27.0...v0.27.1) (2020-10-14)
 
 
