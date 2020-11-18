@@ -30,7 +30,7 @@
     "@semantic-release/changelog": "^3.0.4",
     "@semantic-release/git": "^7.0.12",
     "@semantic-release/npm": "^5.1.9",
-    "semantic-release": "^15.13.24"
+    "semantic-release": "^17.2.3"
   },
   "resolutions": {
     "fstream": "1.0.12",
