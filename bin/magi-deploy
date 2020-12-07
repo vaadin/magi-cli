@@ -4,6 +4,7 @@
 const program = require('commander');
 program
   .option('--auth', 'Ask and replace saved Bender authentication credentials')
+  .option('--next', 'Deploy Polymer 3 / LitElement based component')
   .parse(process.argv);
 
 const {workingPackage, elementName, createAPI} = require('../lib/tools.js');
@@ -36,9 +37,10 @@ async function main() {
   } catch (ignore) {
   }
 
+  const id = program.next ? 'CoreElements_DeployTest_MdeployNext' : 'CoreElements_DeployTest_Mdeploy';
   const tmp = workingPackage.repository.split('/');
   const response = await api.post(`/buildQueue`, {
-    buildType: {id: 'CoreElements_DeployTest_Mdeploy'},
+    buildType: {id},
     properties: {
       property: [
         {name: 'repo', value: tmp[0]},

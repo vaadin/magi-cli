@@ -126,6 +126,9 @@ async function main(version) {
     }
   }
 
+  // Detect if the component is P2 or "next"
+  const isP2 = fs.existsSync('bower.json');
+
   /* Check whether this version is already published in npm */
   if (program.skipNpm) {
     info('Skipping npm Release');
@@ -140,10 +143,13 @@ async function main(version) {
     if (npmInfo) {
       done(`Release Already deployed in npm: ${npmUrl}`);
     } else {
-      info('Converting to polymer 3');
-      rimraf.sync('node_modules');
-      await exe('magi p3-convert --out . --import-style=name');
-      done('Converted to Polymer 3')
+      // P2 component: convert to P3
+      if (isP2) {
+        info('Converting to polymer 3');
+        rimraf.sync('node_modules');
+        await exe('magi p3-convert --out . --import-style=name');
+        done('Converted to Polymer 3');
+      }
 
       info('Publishing to npm');
       if (branch === 'master') {
@@ -157,9 +163,12 @@ async function main(version) {
         done(`Deployed to npm: ${npmUrl}`);
       }
 
-      info('Reverting P3 back to P2');
-      await exe('git reset --hard HEAD^', true);
-      await exe('git clean -fd', true);
+      // P2 component: restore master
+      if (isP2) {
+        info('Reverting P3 back to P2');
+        await exe('git reset --hard HEAD^', true);
+        await exe('git clean -fd', true);
+      }
     }
   }
 
@@ -168,12 +177,13 @@ async function main(version) {
     info('Skipping CDN Deployment');
   } else {
     info('Deploying to demo server');
-    await exe(`magi deploy v${newVersion}`);
-    done(`Deployed in CDN at: https://cdn-origin.vaadin.com/${elementName}/${newVersion}/demo/`);
+    const args = isP2 ? '' : '--next';
+    await exe(`magi deploy v${newVersion}${args}`);
+    done(`Deployed in CDN at: https://cdn-origin.vaadin.com/${elementName}/${newVersion}/`);
   }
 
   /* WebJar */
-  if (program.skipWebjar) {
+  if (program.skipWebjar || !isP2) {
     info('Skipping Webjar Deployment');
   } else {
     info('Deploying to webjar');
