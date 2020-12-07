@@ -37,10 +37,10 @@ async function main() {
   } catch (ignore) {
   }
 
-  const id = program.next ? 'CoreElements_DeployTest_MdeployNext' : 'CoreElements_DeployTest_Mdeploy';
+  const build = program.next ? 'CoreElements_DeployTest_MdeployNext' : 'CoreElements_DeployTest_Mdeploy';
   const tmp = workingPackage.repository.split('/');
   const response = await api.post(`/buildQueue`, {
-    buildType: {id},
+    buildType: {id: build},
     properties: {
       property: [
         {name: 'repo', value: tmp[0]},
