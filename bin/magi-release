@@ -178,7 +178,7 @@ async function main(version) {
     info('Skipping CDN Deployment');
   } else {
     info('Deploying to demo server');
-    const args = isP2 ? '' : '--next';
+    const args = isP2 ? '' : ' --next';
     await exe(`magi deploy v${newVersion}${args}`);
     done(`Deployed in CDN at: https://cdn-origin.vaadin.com/${elementName}/${newVersion}/`);
   }
