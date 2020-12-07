@@ -1,3 +1,14 @@
+# 0.29.0 (2020-12-07)
+
+### Bug Fixes
+
+* add missing whitespace to deploy args (#126) (bed77a0)
+* update to work with P3 components (#125) (d7564cd)
+
+### Features
+
+* release and deploy P3 components (#124) (46183a5)
+
 # [0.28.0](https://github.com/vaadin/magi-cli/compare/v0.27.1...v0.28.0) (2020-10-14)
 
 
