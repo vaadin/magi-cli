@@ -34,12 +34,16 @@ const {exe, ask, workingPackage, elementName} = require('../lib/tools.js');
 const {getGitHubApi} = require('../lib/github-api.js');
 
 async function main(version) {
+  // Detect if the component is P2 or "next"
+  const isP2 = fs.existsSync('bower.json');
 
-  /* Check if Bower dependencies have correct ranges */
-  try {
-    await exe('magi check-bower');
-  } catch (e) {
-    throw new Error('Incorrect dependency version range found. Cannot release');
+  if (isP2) {
+    /* Check if Bower dependencies have correct ranges */
+    try {
+      await exe('magi check-bower');
+    } catch (e) {
+      throw new Error('Incorrect dependency version range found. Cannot release');
+    }
   }
 
   /* Read current version */
@@ -125,9 +129,6 @@ async function main(version) {
       await ask('    Remember to click on `Publish Release`, otherwise webjar will fail.\n    Press Enter once you are done with the release notes...');
     }
   }
-
-  // Detect if the component is P2 or "next"
-  const isP2 = fs.existsSync('bower.json');
 
   /* Check whether this version is already published in npm */
   if (program.skipNpm) {
