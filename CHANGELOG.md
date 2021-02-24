@@ -1,3 +1,8 @@
+# 0.29.1 (2021-02-24)
+### Bug Fixes
+
+* use token for bender auth (#130) (c4a6ed9)
+
 # 0.29.0 (2020-12-07)
 
 ### Bug Fixes
