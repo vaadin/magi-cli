@@ -1,3 +1,10 @@
+## [0.29.1](https://github.com/vaadin/magi-cli/compare/v0.29.0...v0.29.1) (2021-02-24)
+
+
+### Bug Fixes
+
+* use token for bender auth ([#130](https://github.com/vaadin/magi-cli/issues/130)) ([c4a6ed9](https://github.com/vaadin/magi-cli/commit/c4a6ed975dcfcbf3c98ab7aea71cc03d4a749aa9))
+
 # [0.29.0](https://github.com/vaadin/magi-cli/compare/v0.28.0...v0.29.0) (2020-12-07)
 
 
