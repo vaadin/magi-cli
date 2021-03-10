@@ -1,3 +1,10 @@
+## [0.29.2](https://github.com/vaadin/magi-cli/compare/v0.29.1...v0.29.2) (2021-03-10)
+
+
+### Bug Fixes
+
+* use strict regex for version update ([#132](https://github.com/vaadin/magi-cli/issues/132)) ([22e5f42](https://github.com/vaadin/magi-cli/commit/22e5f424e418d879cc91904379c5bc5408aa9e2a))
+
 ## [0.29.1](https://github.com/vaadin/magi-cli/compare/v0.29.0...v0.29.1) (2021-02-24)
 
 
