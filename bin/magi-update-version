@@ -2,7 +2,7 @@
 'use strict';
 
 // Should be run from 'preversion'
-// Assumes that the old version is in package.json and the new version is in npm_package_version environment variable.
+// Assumes that the old version is in package.json and the new version is in npm_new_version environment variable.
 const replace = require('replace-in-file');
 const {exe, workingPackage} = require('../lib/tools.js');
 
@@ -12,9 +12,9 @@ if (!oldVersion) {
   process.exit(1);
 }
 
-const version = process.env.npm_package_version;
+const version = process.env.npm_new_version;
 if (!version) {
-  console.log('New version must be given as a npm_package_version environment variable.');
+  console.log('New version must be given as a npm_new_version environment variable.');
   process.exit(1);
 }
 
