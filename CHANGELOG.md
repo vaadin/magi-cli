@@ -1,14 +1,19 @@
-# 0.29.2 (2021-03-10)
+## [0.29.2](https://github.com/vaadin/magi-cli/compare/v0.29.1...v0.29.2) (2021-03-10)
+
+
 ### Bug Fixes
 
 * use strict regex for version update (#132) (22e5f42)
 
-# 0.29.1 (2021-02-24)
+## [0.29.1](https://github.com/vaadin/magi-cli/compare/v0.29.0...v0.29.1) (2021-02-24)
+
+
 ### Bug Fixes
 
 * use token for bender auth (#130) (c4a6ed9)
 
-# 0.29.0 (2020-12-07)
+# [0.29.0](https://github.com/vaadin/magi-cli/compare/v0.28.0...v0.29.0) (2020-12-07)
+
 
 ### Bug Fixes
 
