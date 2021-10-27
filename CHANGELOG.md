@@ -1,3 +1,18 @@
+# [0.29.0](https://github.com/vaadin/magi-cli/compare/v0.28.0...v0.29.0) (2021-10-27)
+
+
+### Bug Fixes
+
+* add missing whitespace to deploy args ([#126](https://github.com/vaadin/magi-cli/issues/126)) ([bed77a0](https://github.com/vaadin/magi-cli/commit/bed77a0c3aaae88018a0067ee91cdcf479e29e61))
+* update to work with P3 components ([#125](https://github.com/vaadin/magi-cli/issues/125)) ([d7564cd](https://github.com/vaadin/magi-cli/commit/d7564cd9bd11e3dce3121e45efa06a2fcd6635cb))
+* use strict regex for version update ([#132](https://github.com/vaadin/magi-cli/issues/132)) ([2b3c659](https://github.com/vaadin/magi-cli/commit/2b3c659c4573978a0d2d52d9cb705ea4e6ec54b9))
+* use token for bender auth ([#130](https://github.com/vaadin/magi-cli/issues/130)) ([2676c9e](https://github.com/vaadin/magi-cli/commit/2676c9edfe61cb110d0e2a7296ee23e33a933d73))
+
+
+### Features
+
+* release and deploy P3 components ([#124](https://github.com/vaadin/magi-cli/issues/124)) ([46183a5](https://github.com/vaadin/magi-cli/commit/46183a59517009be73762dc3f85b3ffba23f57b4))
+
 ## [0.29.2](https://github.com/vaadin/magi-cli/compare/v0.29.1...v0.29.2) (2021-03-10)
 
 
