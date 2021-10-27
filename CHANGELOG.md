@@ -1,3 +1,8 @@
+# [1.0.0](https://github.com/vaadin/magi-cli/compare/v0.29.2...v1.0.0) (2021-10-27)
+
+
+* update dependencies to new major versions ([#154](https://github.com/vaadin/magi-cli/issues/154)) ([79644dd](https://github.com/vaadin/magi-cli/commit/79644dd0b6fb14c463c6623906abc950bd075cdc))
+
 ## [0.29.2](https://github.com/vaadin/magi-cli/compare/v0.29.1...v0.29.2) (2021-03-10)
 
 
