@@ -10,6 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "release": "semantic-release"
   },
+  "engines": {
+    "npm": ">= 7.0.0"
+  },
   "author": "Vaadin Ltd",
   "license": "Apache-2.0",
   "dependencies": {
@@ -27,10 +30,10 @@
     "update-notifier": "^3.0.0"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^3.0.4",
-    "@semantic-release/git": "^7.0.12",
-    "@semantic-release/npm": "^5.1.9",
-    "semantic-release": "^17.2.3"
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/npm": "^8.0.2",
+    "semantic-release": "^18.0.0"
   },
   "resolutions": {
     "fstream": "1.0.12",
