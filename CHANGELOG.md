@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/vaadin/magi-cli/compare/v1.0.0...v1.0.1) (2021-11-02)
+
+
+### Bug Fixes
+
+* make check-releases respect conventional commits and platform branch ([#155](https://github.com/vaadin/magi-cli/issues/155)) ([ed6f1d1](https://github.com/vaadin/magi-cli/commit/ed6f1d17a0f53c3c9f5e165029a76f671a197239))
+
 # [1.0.0](https://github.com/vaadin/magi-cli/compare/v0.29.2...v1.0.0) (2021-10-27)
 
 
