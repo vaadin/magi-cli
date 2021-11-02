@@ -44,8 +44,8 @@ program
     'Checks that Bower dependency ranges are correct for webjars.org deployment'
   )
   .command(
-    'check-releases [--sort-commit] [--show-passed]',
-    'Shows the information on releases of the components'
+    'check-releases <platformBranch> [--sort-commit] [--show-passed]',
+    'Shows the list of legacy components that have unreleased changes and if versions were not bumped in versions.json on <platformBranch> of the platform repository. By default, is checking 14.7 branch'
   )
   .command(
     'check-version',

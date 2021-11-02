@@ -3,6 +3,7 @@
 
 const program = require('commander');
 program
+  .arguments('<platformBranch>')
   .option('--sort-commit', 'Sort entries by commit numbers')
   .option('--show-passed', 'Show repositories that are up to date')
   .parse(process.argv);
@@ -20,7 +21,9 @@ const resetColor = '\x1b[0m';
 let logs = []
 
 async function main() {
-  const platformVersions = await getPlatformJson();
+  const [platformBranch] = program.args;
+
+  const platformVersions = await getPlatformJson(platformBranch);
   const gh = await getGitHubApi(program.auth);
 
   const platformString = 'Platform version';
@@ -37,7 +40,7 @@ async function main() {
     let commitsObj;
     try {
       commitsObj = await componentRepo.listCommits();
-      const commits = commitsObj.data.map(item => item.commit.message);
+      const commits = commitsObj.data.map(item => item.commit.message).filter(msg => !/chore|docs|test|build|ci/.test(msg));
 
       const latestRelease = commits.find(item => versionString.test(item)) || 'No version found';
       const latestReleaseVersion = latestRelease.match(semverVersionString)[0];
@@ -46,7 +49,7 @@ async function main() {
       const platformVersionString = alignStringLength(platformString, item.version);
       const ghVersionString = alignStringLength(ghString, latestReleaseVersion);
       const numberOfCommitsString = (latestReleaseIndex > 0) ?
-        alignStringLength(numberString, latestReleaseIndex + 1) :
+        alignStringLength(numberString, latestReleaseIndex) :
         alignStringLength(numberString, 0);
 
       const logString = (item.version !== latestReleaseVersion ? failedColor : successColor) + '| %s' + ' | ' + resetColor +
@@ -84,6 +87,10 @@ async function main() {
               `${successColor}Sort order is${resetColor} ${!!program.sortCommit ? 'Number of commits' : 'Version mismatch'}\n` +
               `${successColor}Show passed${resetColor}: ${!!program.showPassed ? 'Yes' : 'No'}`);
 
+  if (!program.showPassed) {
+    logs = logs.filter(item => item.mismatch || item.commitsNumber > 0 || isNaN(item.commitsNumber));
+  }
+
   console.log(neutralColor + '%s' + resetColor, `| ${platformString} | ${ghString} | ${numberString} | Repo`);
   if (!!program.sortCommit) {
     logs.sort((curr, next) => parseInt(next.commitsNumber) - parseInt(curr.commitsNumber));
@@ -91,16 +98,12 @@ async function main() {
     logs.sort((curr, next) => {
       if (curr.mismatch && next.mismatch) {
         return 0;
-      } else if (curr.mismtach && !next.mismtach) {
+      } else if (curr.mismatch && !next.mismatch) {
         return -1;
       } else {
         return 1;
       }
     });
-  }
-
-  if (!program.showPassed) {
-    logs = logs.filter(item => item.mismtach === true || item.commitsNumber > 0 || isNaN(item.commitsNumber));
   }
 
   logs.forEach(entry => console.log(entry.log, entry.platformVersion, entry.ghVersion, entry.commitsNumber, entry.repo));
@@ -110,10 +113,10 @@ function alignStringLength(initialString, newString) {
   return newString.toString() + initialString.replace(/./g, ' ').slice(newString.toString().length);
 }
 
-async function getPlatformJson() {
+async function getPlatformJson(platformBranch = '14.7') {
   return new Promise(resolve => {
     request({
-      url: 'https://raw.githubusercontent.com/vaadin/platform/master/versions.json',
+      url: `https://raw.githubusercontent.com/vaadin/platform/${platformBranch}/versions.json`,
       json: true
     }, function (error, response, body) {
       const platformVersions =
