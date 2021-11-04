@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/vaadin/magi-cli/compare/v1.0.1...v1.0.2) (2021-11-04)
+
+
+### Bug Fixes
+
+* make check-releases filter for commits that should be included ([#156](https://github.com/vaadin/magi-cli/issues/156)) ([9b9f4a6](https://github.com/vaadin/magi-cli/commit/9b9f4a61be0a7f27fffc4d2da802801563677d9c))
+
 ## [1.0.1](https://github.com/vaadin/magi-cli/compare/v1.0.0...v1.0.1) (2021-11-02)
 
 
