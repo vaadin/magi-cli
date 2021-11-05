@@ -5,6 +5,8 @@ const program = require('commander');
 const fs = require('fs');
 const rimraf = require('rimraf');
 
+const DUMMY_TAG_NAME = "ignore"
+
 function info(msg) {
   console.log(' [magi] 🌀  \x1b[36m%s\x1b[0m ...', msg);
 }
@@ -17,10 +19,22 @@ function error(msg) {
   console.log(' [magi] ⚠️  ⚠️  \x1b[31m%s\x1b[0m ⚠️  ⚠️ \n', msg);
 }
 
+function determineNpmTag(program, newVersion) {
+  if (program.skipNpmTag) {
+    // npm publish has no options for not tagging release
+    // As a workaround we use a dummy tag, in order to prevent NPM overwriting the `latest` or `next` tags
+    return DUMMY_TAG_NAME;
+  }
+
+  const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
+  return next.test(newVersion) ? 'next' : 'latest';
+}
+
 program
   .arguments('<version>')
   .option('--draft', 'Create the release in draft mode')
   .option('--skip-npm', 'Skip p3 conversion and npm deployment')
+  .option('--skip-npm-tag', 'Skip tagging the release in NPM as either `latest` or `next`. Use when releasing packages for older versions.')
   .option('--skip-cdn', 'Skip demo server deployment')
   .option('--skip-webjar', 'Skip webjar deployment')
   .parse(process.argv);
@@ -154,13 +168,12 @@ async function main(version) {
 
       info('Publishing to npm');
       if (branch === 'master') {
-        const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
-        const tag = next.test(newVersion) ? 'next' : 'latest';
-        await exe(`npm publish --access public --tag ${tag}`);
+        const tag = determineNpmTag(program, newVersion);
+        await exe(`npm publish --dry-run --access public --tag ${tag}`);
         done(`Deployed to npm: ${npmUrl} with tag ${tag}`);
       } else {
         // Backported patch releases
-        await exe(`npm publish --access public`);
+        await exe(`npm publish --access public --tag ${DUMMY_TAG_NAME}`);
         done(`Deployed to npm: ${npmUrl}`);
       }
 
