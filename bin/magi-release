@@ -19,13 +19,14 @@ function error(msg) {
   console.log(' [magi] ⚠️  ⚠️  \x1b[31m%s\x1b[0m ⚠️  ⚠️ \n', msg);
 }
 
-function determineNpmTag(program, newVersion) {
-  if (program.skipNpmTag) {
-    // npm publish has no options for not tagging release
-    // As a workaround we use a dummy tag, in order to prevent NPM overwriting the `latest` or `next` tags
+function determineNpmTag(program, branch, newVersion) {
+  // Use a dummy tag when not publishing from master, or when tagging is explicitly disabled
+  // We use a dummy tag since npm publish has no options for not tagging release
+  if (branch !== 'master' || program.skipNpmTag) {
     return DUMMY_TAG_NAME;
   }
 
+  // When publishing from master, determine whether to tag as `latest` or `next`
   const next = /(alpha|beta|pre|rc)[.]*[0-9]+$/;
   return next.test(newVersion) ? 'next' : 'latest';
 }
@@ -167,14 +168,17 @@ async function main(version) {
       }
 
       info('Publishing to npm');
-      if (branch === 'master') {
-        const tag = determineNpmTag(program, newVersion);
-        await exe(`npm publish --dry-run --access public --tag ${tag}`);
-        done(`Deployed to npm: ${npmUrl} with tag ${tag}`);
-      } else {
-        // Backported patch releases
-        await exe(`npm publish --access public --tag ${DUMMY_TAG_NAME}`);
-        done(`Deployed to npm: ${npmUrl}`);
+      const tag = determineNpmTag(program, branch, newVersion);
+      await exe(`npm publish --access public --tag ${tag}`);
+      done(`Deployed to npm: ${npmUrl} with tag ${tag}`);
+
+      // Remove dummy tag after publish
+      if (tag === DUMMY_TAG_NAME) {
+        try {
+          await exe(`npm dist-tag rm ${workingPackage.name} ${DUMMY_TAG_NAME}`);
+        } catch(_) {
+          // Ignore
+        }
       }
 
       // P2 component: restore master
