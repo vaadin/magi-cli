@@ -169,6 +169,9 @@ async function main(version) {
 
       info('Publishing to npm');
       const tag = determineNpmTag(program, branch, newVersion);
+      if (tag === DUMMY_TAG_NAME) {
+        info(`Using dummy tag \`${DUMMY_TAG_NAME}\` in order to avoid publishing as \`latest\``);
+      }
       await exe(`npm publish --access public --tag ${tag}`);
       done(`Deployed to npm: ${npmUrl} with tag ${tag}`);
 
