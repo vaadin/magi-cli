@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/vaadin/magi-cli/compare/v1.0.2...v1.1.0) (2021-11-15)
+
+
+### Features
+
+* allow skipping NPM tagging ([#157](https://github.com/vaadin/magi-cli/issues/157)) ([fca7d38](https://github.com/vaadin/magi-cli/commit/fca7d38cbde3031968cfd227ba03ab24c85ed777))
+
 ## [1.0.2](https://github.com/vaadin/magi-cli/compare/v1.0.1...v1.0.2) (2021-11-04)
 
 

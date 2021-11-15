@@ -1,6 +1,6 @@
 {
   "name": "magi-cli",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Elements team command-line team member",
   "main": "./bin/magi",
   "bin": {
