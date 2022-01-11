@@ -174,12 +174,19 @@ async function main() {
     to: '@extends PolymerElement'
   });
 
+  // Needed for gen-typescript-declarations to detect project type
+  rimraf.sync('bower_components');
+
+  // Use different lockfile for Polymer 3
+  if (fs.existsSync('package-lock-p3.json')) {
+    fs.renameSync('package-lock-p3.json', 'package-lock.json');
+  }
+
+  // Use npm ci to enforce lockfile
+  runSync('npm ci');
+
+  // Generate TypeScript definitions
   if (fs.existsSync('gen-tsd.json')) {
-    // Needed for gen-typescript-declarations to detect project type
-    rimraf.sync('bower_components');
-
-    runSync('npm install');
-
     runSync('npm run generate-typings');
 
     if (fs.existsSync(path.join('@types', 'interfaces.d.ts'))) {
@@ -192,13 +199,6 @@ async function main() {
       });
     }
   }
-
-  // Remove gen-typescript-declarations
-  replace.sync({
-    files: ['package.json'],
-    from: /.*"@web-padawan\/gen-typescript-declarations": "\^1\.6\.2",*\n/g,
-    to: ''
-  });
 }
 
 main()
