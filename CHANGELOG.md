@@ -1,3 +1,11 @@
+# [1.2.0-pre.1](https://github.com/vaadin/magi-cli/compare/v1.1.0...v1.2.0-pre.1) (2022-01-11)
+
+* enforce using lockfile in p3-convert ([#158](https://github.com/vaadin/magi-cli/issues/158))
+
+### Features
+
+* allow skipping NPM tagging ([#157](https://github.com/vaadin/magi-cli/issues/157)) ([fca7d38](https://github.com/vaadin/magi-cli/commit/fca7d38cbde3031968cfd227ba03ab24c85ed777))
+
 # [1.1.0](https://github.com/vaadin/magi-cli/compare/v1.0.2...v1.1.0) (2021-11-15)
 
 
