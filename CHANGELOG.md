@@ -1,3 +1,7 @@
+# [1.2.0](https://github.com/vaadin/magi-cli/compare/v1.2.0-pre.1...v1.2.0) (2022-01-20)
+
+* no changes since previous version
+
 # [1.2.0-pre.1](https://github.com/vaadin/magi-cli/compare/v1.1.0...v1.2.0-pre.1) (2022-01-11)
 
 * enforce using lockfile in p3-convert ([#158](https://github.com/vaadin/magi-cli/issues/158))
