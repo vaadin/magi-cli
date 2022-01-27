@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/vaadin/magi-cli/compare/v1.2.0...v1.2.1) (2022-01-27)
+
+### Bug Fixes
+
+* do not override custom p3-post scripts ([#159](https://github.com/vaadin/magi-cli/issues/159)) ([a70b3fa](https://github.com/vaadin/magi-cli/commit/a70b3fac3efd4e9667b162a516af7c7e6c10c0ef))
+
 # [1.2.0](https://github.com/vaadin/magi-cli/compare/v1.2.0-pre.1...v1.2.0) (2022-01-20)
 
 * no changes since previous version
@@ -5,10 +11,6 @@
 # [1.2.0-pre.1](https://github.com/vaadin/magi-cli/compare/v1.1.0...v1.2.0-pre.1) (2022-01-11)
 
 * enforce using lockfile in p3-convert ([#158](https://github.com/vaadin/magi-cli/issues/158))
-
-### Features
-
-* allow skipping NPM tagging ([#157](https://github.com/vaadin/magi-cli/issues/157)) ([fca7d38](https://github.com/vaadin/magi-cli/commit/fca7d38cbde3031968cfd227ba03ab24c85ed777))
 
 # [1.1.0](https://github.com/vaadin/magi-cli/compare/v1.0.2...v1.1.0) (2021-11-15)
 
