@@ -174,6 +174,19 @@ async function main() {
     to: '@extends PolymerElement'
   });
 
+  // Read the updated package.json
+  const updatedPackage = JSON.parse(fs.readFileSync('package.json'));
+
+  if (!updatedPackage.scripts) {
+    updatedPackage.scripts = {};
+  }
+
+  updatedPackage.scripts['generate-typings'] = 'gen-typescript-declarations --outDir . --verify';
+  updatedPackage.scripts.test = 'wct --npm';
+
+  // Format and write changes to package.json
+  jsonfile.writeFileSync('package.json', updatedPackage, {spaces: 2});
+
   // Needed for gen-typescript-declarations to detect project type
   rimraf.sync('bower_components');
 
