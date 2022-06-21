@@ -33,7 +33,7 @@
     "@semantic-release/changelog": "^6.0.0",
     "@semantic-release/git": "^10.0.0",
     "@semantic-release/npm": "^8.0.2",
-    "semantic-release": "^18.0.0"
+    "semantic-release": "^19.0.3"
   },
   "resolutions": {
     "fstream": "1.0.12",
