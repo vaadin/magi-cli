@@ -27,7 +27,7 @@
     "request": "^2.88.0",
     "rimraf": "^3.0.0",
     "semver": "^7.3.5",
-    "update-notifier": "^5.1.0"
+    "update-notifier": "^6.0.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.0",
