@@ -106,6 +106,12 @@ async function main() {
     dmStrings.push(`highcharts,highcharts,${highcharts}`);
   }
 
+  // Detect dompurify version
+  const {dompurify} = bowerJson.dependencies;
+  if (dompurify) {
+    dmStrings.push(`dompurify,dompurify,${dompurify}`);
+  }
+
   // Convert P2 to P3
   runSync(`
     modulizer \
