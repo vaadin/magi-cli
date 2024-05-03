@@ -107,9 +107,9 @@ async function main() {
   }
 
   // Detect dompurify version
-  const {dompurify} = bowerJson.dependencies;
-  if (dompurify) {
-    dmStrings.push(`dompurify,dompurify,${dompurify}`);
+  const {DOMPurify} = bowerJson.dependencies;
+  if (DOMPurify) {
+    dmStrings.push(`DOMPurify,dompurify,${DOMPurify}`);
   }
 
   // Convert P2 to P3
